@@ -1,0 +1,19 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "community-gallery-tags/gallery",
+	"version": "0.1.0",
+	"title": "Community Gallery Tags",
+	"category": "media",
+	"icon": "format-gallery",
+	"description": "Block to display a gallery of photos, and enable visitors to suggest tags.",
+	"example": {},
+	"supports": {
+		"html": false
+	},
+	"textdomain": "community-gallery-tags",
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./index.css",
+	"style": "file:./style-index.css",
+	"viewScript": "file:./view.js"
+}
