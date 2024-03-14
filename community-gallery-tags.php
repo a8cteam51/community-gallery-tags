@@ -45,7 +45,17 @@ add_action( 'init', 'community_gallery_tags_gallery_block_init' );
  */
 function community_gallery_tags_gallery__render_callback( $block_attributes, $content ) {
 	add_action( 'wp_footer', 'community_gallery_tags_gallery__js_template' );
-	wp_enqueue_script( 'community-gallery-tags', plugins_url( 'js/gallery.js', __FILE__ ), array( 'wp-util', 'wp-api', 'jquery' ), false, true );
+	wp_enqueue_script(
+		'community-gallery-tags',
+		plugins_url( 'js/gallery.js', __FILE__ ),
+		array(
+			'wp-util',
+			'wp-api',
+			'jquery',
+		),
+		false,
+		true
+	);
 
 	$post_id = 0; // We can allow customizing this via block attributes if we'd like.  `0` will default to the global $post object on render.
 	$attachments = get_attached_media( 'image', $post_id ); // can change the first argument to an empty string if we want everything including videos.
