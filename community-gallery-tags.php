@@ -15,6 +15,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+add_action( 'init', function() {
+	register_taxonomy_for_object_type( 'post_tag', 'attachment' );
+});
+
 /**
  * Register `post_tag` for use on attachments.
  */
