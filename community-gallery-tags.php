@@ -155,3 +155,118 @@ function community_gallery_tags_endpoint__suggest_tag( WP_REST_Request $request 
 }
 
 // Add the admin page to view and manage the suggestions --
+
+add_action( 'admin_menu', function() {
+	$hook_suffix = add_media_page(
+		__( 'Custom Gallery Tags Management' ),
+		__( 'CGT Admin' ),
+		'upload_files',
+		'cgt-management',
+		'custom_gallery_tags__admin_page'
+	);
+});
+
+function custom_gallery_tags__admin_page() {
+	global $wpdb;
+
+	$_to_review = $wpdb->get_results( "SELECT * FROM `{$wpdb->postmeta}` WHERE `meta_key` = '_cgt_suggested_tag' ORDER BY `post_id` ASC" );
+
+	?>
+	<div class="wrap">
+		<h1><?php _e( 'Custom Gallery Tags Management' ); ?></h1>
+
+		<?php if ( count( $_to_review ) ) : ?>
+		<table>
+			<thead>
+				<tr>
+					<th>Attachment</th>
+					<th>Suggestion</th>
+					<th>Tags already on Media</th>
+					<th>Action</th>
+				</tr>
+			</thead>
+			<tbody>
+				<?php foreach ( $_to_review as $suggestion ) :
+					$proposal = maybe_unserialize( $suggestion->meta_value );
+					?>
+					<tr>
+						<th scope="row">
+							<?php echo wp_get_attachment_image( $suggestion->post_id, 'medium' ); ?>
+						</th>
+						<td>
+							<pre><?php echo esc_html( $proposal['tag'] ); ?></pre>
+							<?php if ( $proposal['user'] ) : ?>
+								<p>By User ID <strong><?php echo esc_html( $proposal['user'] ); ?></strong></p>
+							<?php endif; ?>
+						</td>
+						<td>
+							<?php echo get_the_term_list( $suggestion->post_id, 'post_tag' ); ?>
+						</td>
+						<td>
+							<form action="<?php echo admin_url( 'admin-post.php' ); ?>" method="post">
+								<input name="action" type="hidden" value="cgt_moderate_tags" />
+								<input name="attachment_id" type="hidden" value="<?php echo esc_attr( $suggestion->post_id ); ?>" />
+								<input name="postmeta_id" type="hidden" value="<?php echo esc_attr( $suggestion->meta_id ); ?>" />
+								<input name="tag" type="text" value="<?php echo esc_attr( $proposal['tag'] ); ?>" />
+								<br />
+								<?php
+								submit_button(
+									'Add',
+									'primary small',
+									'add-tag',
+									false
+								);
+								echo "&nbsp;";
+								submit_button(
+									'Delete',
+									'delete small',
+									'delete-suggestion',
+									false
+								);
+								?>
+							</form>
+						</td>
+					</tr>
+				<?php endforeach; ?>
+			</tbody>
+		</table>
+		<?php else : ?>
+			<p><?php esc_html_e( 'There are no pending suggestions for tags on your media items.' ); ?></p>
+		<?php endif; ?>
+
+	</div>
+	<?php
+}
+
+/**
+ * Fallback for sans-javascript-hijinks.
+ */
+add_action( 'admin_post_cgt_moderate_tags', function() {
+	$postmeta_id = intval( $_POST['postmeta_id'] );
+	$attachment_id = intval( $_POST['attachment_id'] );
+
+	if ( 'attachment' !== get_post_type( $attachment_id ) ) {
+		wp_die( new WP_Error( 'bad-attachment-id', __( 'The specified attachment ID does not seem to be valid.' ) ) );
+	}
+
+	if ( isset( $_POST['add-tag'] ) ) {
+		$new_tag = sanitize_text_field( $_POST['tag'] );
+
+		$result = wp_set_post_terms(
+			$attachment_id,
+			$new_tag,
+			'post_tag',
+			true // IMPORTANT! Don't replace, just append.
+		);
+
+		if ( $result ) {
+			delete_metadata_by_mid( 'post', (int) $postmeta_id );
+		}
+	} elseif ( isset( $_POST['delete-suggestion'] ) ) {
+		$result = delete_metadata_by_mid( 'post', (int) $postmeta_id );
+	} else {
+		// No recognized action.  Do nothing.
+	}
+
+	wp_safe_redirect( admin_url( 'upload.php?page=cgt-management' ) );
+} );
