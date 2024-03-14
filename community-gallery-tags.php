@@ -50,7 +50,7 @@ function community_gallery_tags_gallery__render_callback( $block_attributes, $co
 		plugins_url( 'js/gallery.js', __FILE__ ),
 		array(
 			'wp-util',
-			'wp-api',
+			'wp-api-request',
 			'jquery',
 		),
 		false,

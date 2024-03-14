@@ -11,13 +11,27 @@
 
 		let newTag = window.prompt( "What new tag?" );
 
+		// If it's empty, don't bother.
 		if ( ! newTag ) {
 			return;
 		}
 
+		wp.apiRequest({
+			path: '/community-gallery-tags/v1/suggest-tag',
+			data: {
+				attachment_id: attachmentId,
+				tag: newTag
+			},
+			method: 'POST',
+			dataType: 'json'
+		}).done( ( response ) => {
+			console.log( response );
+
+			$element.siblings('.term-list').append( '<li>' + newTag + '</li>' );
+		});
+
 		console.log( "Tag '" + newTag + "' suggested for attachment " + attachmentId );
 
-		$element.siblings('.term-list').append( '<li>' + newTag + '</li>' );
 	});
 
 	document.body.addEventListener( 'uploadedGalleryImage', function(e) {
