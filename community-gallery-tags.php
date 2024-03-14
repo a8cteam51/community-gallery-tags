@@ -89,19 +89,17 @@ function community_gallery_tags_gallery__js_template() {
 
 
 add_action( 'rest_api_init', function() {
-	function register_routes() {
-		register_rest_route(
-			'community-gallery-tags/v1',
-			'/suggest-tag',
-			array(
-				'methods'             => 'POST',
-				'callback'            => 'community_gallery_tags_endpoint__suggest_tag',
-				'permission_callback' => function() {
-					return current_user_can( 'upload_files' );
-				}
-			)
-		);
-	}
+	register_rest_route(
+		'community-gallery-tags/v1',
+		'/suggest-tag',
+		array(
+			'methods'             => 'POST',
+			'callback'            => 'community_gallery_tags_endpoint__suggest_tag',
+			'permission_callback' => function() {
+				return current_user_can( 'cgt_tag_media' );
+			}
+		)
+	);
 });
 
 /**
