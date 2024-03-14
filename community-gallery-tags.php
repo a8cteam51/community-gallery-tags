@@ -65,9 +65,13 @@ function community_gallery_tags_gallery__render_callback( $block_attributes, $co
 	foreach ( $attachments as $item ) {
 		$return .= "\t<li class='attachment-{$item->ID}'>\r\n" .
 			"\t\t" . wp_get_attachment_image( $item->ID ) . "\r\n" .
-			"\t\t<ul class='term-list'>" . get_the_term_list( $post_id, 'post_tag', '<li>', '</li><li>', '</li>' ) . "</ul>\r\n" .
-			"\t\t" . sprintf( '<a class="add-tag" href="javascript:;" data-attachment-id="%d">%s</a>', $item->ID, __( '➕ Add a tag?', 'community-gallery-tags' ) ) . "\r\n" .
-			"\t</li>\r\n";
+			"\t\t<ul class='term-list'>" . get_the_term_list( $post_id, 'post_tag', '<li>', '</li><li>', '</li>' ) . "</ul>\r\n";
+
+		if ( current_user_can( 'cgt_tag_media' ) ) {
+			$return .= "\t\t" . sprintf( '<a class="add-tag" href="javascript:;" data-attachment-id="%d">%s</a>', $item->ID, __( '➕ Add a tag?', 'community-gallery-tags' ) ) . "\r\n";
+		}
+
+		$return .= "\t</li>\r\n";
 	}
 
 	$return .= "</ul>\r\n";
@@ -81,12 +85,29 @@ function community_gallery_tags_gallery__js_template() {
 		<li class="attachment-{{ data.id }}">
 			{{{ data.img_tag }}}
 			<ul class="term-list"></ul>
+			<?php if ( current_user_can( 'cgt_tag_media' ) ) : ?>
 			<a class="add-tag" href="javascript:;" data-attachment-id="{{ data.id }}"><?php _e( '➕ Add a tag?', 'community-gallery-tags' ) ?></a>
+			<?php endif; ?>
 		</div>
 	</script>
 	<?php
 }
 
+/**
+ * If you'd like to override this to check other caps, use a later priority!
+ *
+ * `exist` will work for even unauthenticated users.
+ * `read` will require login.
+ */
+add_filter( 'map_meta_cap', function ( array $caps, string $cap ) {
+	switch ( $cap ) {
+		case 'cgt_tag_media':
+			$caps = array( 'exist' );
+			break;
+	}
+
+	return $caps;
+}, 1, 2 );
 
 add_action( 'rest_api_init', function() {
 	register_rest_route(
