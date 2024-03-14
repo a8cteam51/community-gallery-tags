@@ -149,3 +149,5 @@ function community_gallery_tags_endpoint__suggest_tag( WP_REST_Request $request 
 
 	return new WP_REST_Response( $meta_id, 200 );
 }
+
+// Add the admin page to view and manage the suggestions --
