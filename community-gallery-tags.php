@@ -69,7 +69,7 @@ function community_gallery_tags_gallery__render_callback( $block_attributes, $co
 	foreach ( $attachments as $item ) {
 		$return .= "\t<li class='attachment-{$item->ID}'>\r\n" .
 			"\t\t" . wp_get_attachment_image( $item->ID ) . "\r\n" .
-			"\t\t<ul class='term-list'>" . get_the_term_list( $post_id, 'post_tag', '<li>', '</li><li>', '</li>' ) . "</ul>\r\n";
+			"\t\t<ul class='term-list'>" . get_the_term_list( $item->ID, 'post_tag', '<li>', '</li><li>', '</li>' ) . "</ul>\r\n";
 
 		if ( current_user_can( 'cgt_tag_media' ) ) {
 			$return .= "\t\t" . sprintf( '<a class="add-tag" href="javascript:;" data-attachment-id="%d">%s</a>', $item->ID, __( '➕ Add a tag?', 'community-gallery-tags' ) ) . "\r\n";
