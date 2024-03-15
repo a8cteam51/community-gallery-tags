@@ -1,5 +1,4 @@
 (function( $, wp ){
-
 	const tmplCgtItem = wp.template( 'cgt-item' );
 	const $gallery = $('ul.community-gallery-tags-gallery');
 	const $dialogEl = $('#cgt-dialog-form');
@@ -7,6 +6,7 @@
 	// Only bother with this stuff if we have the dialog form.  The dialog form will only render if the user can tag.
 	if ( $dialogEl.length ) {
 		const $dialogForm = $dialogEl.find('form');
+		const $tagInput = $dialogForm.find('input[name=tag]');
 
 		/**
 		 * Set up the dialog modal.  It will be invoked later.
@@ -16,6 +16,7 @@
 			height: 400,
 			width: 300,
 			modal: true,
+			resizable: false,
 			buttons: {
 				Add: function() {
 					$dialogForm.submit()
@@ -41,7 +42,6 @@
 		 */
 		$dialogForm.on( "submit", function( event ) {
 			event.preventDefault();
-			console.log( 'submit' );
 
 			const newTag = $dialogForm.find('input[name=tag]').val();
 			const attachmentId = $dialogForm.find('input[name=attachment_id]').val();
@@ -58,7 +58,9 @@
 			}).done( ( response ) => {
 				console.log( response );
 
-				$gallery.children( 'li.attachment-' + attachmentId ).find('.term-list').append( '<li>' + newTag + '</li>' );
+				$.each( response, function( meta_id, tag ) {
+					$gallery.children( 'li.attachment-' + attachmentId ).find('.term-list').append( '<li data-meta-id="' + meta_id + '">' + tag + '</li>' );
+				});
 
 				$dialog.dialog( 'close' );
 			});
@@ -76,6 +78,13 @@
 			$dialog.dialog('open');
 
 			$dialogForm.find('input[name=attachment_id]').val( attachmentId );
+		});
+
+		/**
+		 * Set up autosuggest for the non-hierarchical taxonomy.
+		 */
+		$tagInput.wpTagsSuggest({
+			taxonomy: 'people'
 		});
 	}
 

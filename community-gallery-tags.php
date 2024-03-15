@@ -87,6 +87,13 @@ function community_gallery_tags_gallery__render_callback( $block_attributes, $co
 	global $wpdb;
 
 	add_action( 'wp_footer', 'community_gallery_tags_gallery__js_template' );
+
+	/**
+	 * This is normally only registered for wp-admin usage, so we have to do it manually.
+	 */
+	wp_register_script( 'tags-suggest', "/wp-admin/js/tags-suggest.min.js", array( 'jquery-ui-autocomplete', 'wp-a11y' ) );
+	wp_set_script_translations( 'tags-suggest' );
+
 	wp_enqueue_script(
 		'community-gallery-tags',
 		plugins_url( 'js/gallery.js', __FILE__ ),
@@ -95,6 +102,7 @@ function community_gallery_tags_gallery__render_callback( $block_attributes, $co
 			'wp-api-request',
 			'jquery',
 			'jquery-ui-dialog',
+			'tags-suggest',
 		),
 		false,
 		true
@@ -151,6 +159,9 @@ function community_gallery_tags_gallery__render_callback( $block_attributes, $co
 
 function community_gallery_tags_gallery__js_template() {
 	?>
+	<script>
+		var ajaxurl = '<?php echo esc_js( admin_url( 'admin-ajax.php', 'relative' ) ); ?>'
+	</script>
 	<script type="text/html" id="tmpl-cgt-item">
 		<li class="attachment-{{ data.id }}">
 			{{{ data.img_tag }}}
@@ -164,15 +175,13 @@ function community_gallery_tags_gallery__js_template() {
 	<?php if ( current_user_can( 'cgt_tag_media' ) ) : ?>
 	<div id="cgt-dialog-form" title="Tag Photo" class="hide-if-no-js">
 		<form>
-			<fieldset>
-				<input type="hidden" name="attachment_id" value="" />
+			<input type="hidden" name="attachment_id" value="" />
 
-				<label for="cgt-tag">Person to Tag:</label><br />
-				<input type="text" name="tag" id="cgt-tag" value="" class="text ui-widget-content ui-corner-all">
+			<label for="cgt-tag">Person to Tag:</label><br />
+			<input type="text" name="tag" id="cgt-tag" value="" class="text ui-widget-content ui-corner-all">
 
-				<!-- Allow form submission with keyboard without duplicating the dialog button -->
-				<input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
-			</fieldset>
+			<!-- Allow form submission with keyboard without duplicating the dialog button -->
+			<input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
 		</form>
 	</div>
 	<?php endif;
@@ -212,27 +221,41 @@ add_action( 'rest_api_init', function() {
  * REST API Endpoint -- take the suggestion, shove it into postmeta for the attachment.
  */
 function community_gallery_tags_endpoint__suggest_tag( WP_REST_Request $request ) {
-	$tag           = $request->get_param( 'tag' );
+	$comma         = _x( ',', 'tag delimiter' );
+	$raw_tag       = $request->get_param( 'tag' );
 	$attachment_id = $request->get_param( 'attachment_id' );
 
 	if ( 'attachment' !== get_post_type( $attachment_id ) ) {
 		return new WP_Error( 'bad-attachment-id', __( 'The specified attachment ID does not seem to be valid.' ) );
 	}
 
-	$meta_id = add_post_meta(
-		$attachment_id,
-		'_cgt_suggested_tag',
-		array(
-			'tag' => $tag,
-			'user' => wp_get_current_user()->user_login
-		)
-	);
+	$tags = explode( $comma, $raw_tag );
+	$tags = array_map( 'trim', $tags );
+	$tags = array_filter( $tags );
 
-	if ( ! $meta_id || is_wp_error( $meta_id ) ) {
-		return $meta_id;
+	$meta_ids = array();
+
+	foreach ( $tags as $tag ) {
+		$meta_id = add_post_meta(
+			$attachment_id,
+			'_cgt_suggested_tag',
+			array(
+				'tag' => $tag,
+				'user' => wp_get_current_user()->user_login
+			)
+		);
+
+		if ( ! $meta_id || is_wp_error( $meta_id ) ) {
+			return $meta_id;
+		}
+
+		$meta_ids[ $meta_id ] = $tag;
 	}
 
-	return new WP_REST_Response( $meta_id, 200 );
+
+
+
+	return new WP_REST_Response( $meta_ids, 200 );
 }
 
 // Add the admin page to view and manage the suggestions --

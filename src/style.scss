@@ -10,3 +10,27 @@
 	color: #fff;
 	padding: 2px;
 }
+
+#cgt-dialog-form {
+	input#cgt-tag {
+		width: 100%;
+	}
+}
+
+.ui-autocomplete.wp-tags-autocomplete {
+	background: #fff;
+	border: 1px solid #888;
+	list-style-type: none;
+
+	padding: 0 0.3em;
+}
+
+/**
+ * Styles taken from jQuery UI:
+ */
+.ui-autocomplete {
+	position: absolute;
+	top: 0;
+	left: 0;
+	cursor: default;
+}
