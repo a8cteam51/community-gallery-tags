@@ -15,15 +15,23 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-add_action( 'init', function() {
-	register_taxonomy_for_object_type( 'post_tag', 'attachment' );
-});
-
 /**
- * Register `post_tag` for use on attachments.
+ * Register `people` taxonomy for use on attachments.
  */
 function cgt_add_categories_to_attachments() {
-	register_taxonomy_for_object_type( 'post_tag', 'attachment' );
+	register_taxonomy(
+		'people',
+		'attachment',
+		array(
+			'label'             => __( 'People' ),
+			'sort'              => true,
+			'show_in_rest'      => true,
+			'show_admin_column' => true,
+			'rewrite'           => array(
+				'slug' => 'person'
+			),
+		)
+	);
 }
 add_action( 'init' , 'cgt_add_categories_to_attachments' );
 
@@ -69,10 +77,10 @@ function community_gallery_tags_gallery__render_callback( $block_attributes, $co
 	foreach ( $attachments as $item ) {
 		$return .= "\t<li class='attachment-{$item->ID}'>\r\n" .
 			"\t\t" . wp_get_attachment_image( $item->ID ) . "\r\n" .
-			"\t\t<ul class='term-list'>" . get_the_term_list( $item->ID, 'post_tag', '<li>', '</li><li>', '</li>' ) . "</ul>\r\n";
+			"\t\t<ul class='term-list'>" . get_the_term_list( $item->ID, 'people', '<li>', '</li><li>', '</li>' ) . "</ul>\r\n";
 
 		if ( current_user_can( 'cgt_tag_media' ) ) {
-			$return .= "\t\t" . sprintf( '<a class="add-tag" href="javascript:;" data-attachment-id="%d">%s</a>', $item->ID, __( '➕ Add a tag?', 'community-gallery-tags' ) ) . "\r\n";
+			$return .= "\t\t" . sprintf( '<a class="add-tag" href="javascript:;" data-attachment-id="%d">%s</a>', $item->ID, __( '➕ Tag?', 'community-gallery-tags' ) ) . "\r\n";
 		}
 
 		$return .= "\t</li>\r\n";
@@ -90,7 +98,7 @@ function community_gallery_tags_gallery__js_template() {
 			{{{ data.img_tag }}}
 			<ul class="term-list"></ul>
 			<?php if ( current_user_can( 'cgt_tag_media' ) ) : ?>
-			<a class="add-tag" href="javascript:;" data-attachment-id="{{ data.id }}"><?php _e( '➕ Add a tag?', 'community-gallery-tags' ) ?></a>
+			<a class="add-tag" href="javascript:;" data-attachment-id="{{ data.id }}"><?php _e( '➕ Tag?', 'community-gallery-tags' ) ?></a>
 			<?php endif; ?>
 		</div>
 	</script>
@@ -200,7 +208,7 @@ function custom_gallery_tags__admin_page() {
 							<?php endif; ?>
 						</td>
 						<td>
-							<?php echo get_the_term_list( $suggestion->post_id, 'post_tag' ); ?>
+							<?php echo get_the_term_list( $suggestion->post_id, 'people' ); ?>
 						</td>
 						<td>
 							<form action="<?php echo admin_url( 'admin-post.php' ); ?>" method="post">
@@ -255,7 +263,7 @@ add_action( 'admin_post_cgt_moderate_tags', function() {
 		$result = wp_set_post_terms(
 			$attachment_id,
 			$new_tag,
-			'post_tag',
+			'people',
 			true // IMPORTANT! Don't replace, just append.
 		);
 
