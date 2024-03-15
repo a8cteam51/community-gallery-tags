@@ -29,6 +29,3 @@ node_modules/
 # dotenv environment variables file
 .env
 
-# Random stuff George wanted to skip for the moment
-package-lock.json
-build
