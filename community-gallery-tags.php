@@ -210,9 +210,20 @@ add_action( 'rest_api_init', function() {
 		array(
 			'methods'             => 'POST',
 			'callback'            => 'community_gallery_tags_endpoint__suggest_tag',
+			'args'                => array(
+				'attachment_id' => array(
+					'validate_callback' => function( $param, $request, $key ) {
+						return is_numeric( $param );
+					}
+				),
+				'tag'           => array(
+					'type'     => 'string',
+					'required' => true,
+				)
+			),
 			'permission_callback' => function() {
 				return current_user_can( 'cgt_tag_media' );
-			}
+			},
 		)
 	);
 });
@@ -251,9 +262,6 @@ function community_gallery_tags_endpoint__suggest_tag( WP_REST_Request $request 
 
 		$meta_ids[ $meta_id ] = $tag;
 	}
-
-
-
 
 	return new WP_REST_Response( $meta_ids, 200 );
 }
