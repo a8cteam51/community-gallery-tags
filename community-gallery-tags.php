@@ -84,6 +84,8 @@ add_action( 'init', 'community_gallery_tags_gallery_block_init' );
  * Render callback for the Community Gallery Tags - Gallery block.
  */
 function community_gallery_tags_gallery__render_callback( $block_attributes, $content ) {
+	global $wpdb;
+
 	add_action( 'wp_footer', 'community_gallery_tags_gallery__js_template' );
 	wp_enqueue_script(
 		'community-gallery-tags',
@@ -104,10 +106,36 @@ function community_gallery_tags_gallery__render_callback( $block_attributes, $co
 
 	$return = "<ul class='community-gallery-tags-gallery'>\r\n"; // @todo: add support for adding classes to this `ul` in the block editor.
 
+	// Get the user's unreviewed suggestions, so we can show them.
+	$unreviewed = $wpdb->get_results(
+		$wpdb->prepare(
+			"SELECT * FROM `{$wpdb->postmeta}` WHERE `meta_key` = '_cgt_suggested_tag' AND `meta_value` LIKE '%%\"%s\"%%' ORDER BY `post_id` ASC",
+			wp_get_current_user()->user_login
+		)
+	);
+
+	if ( $unreviewed ) {
+		$unreviewed_clustered = array();
+		foreach ( $unreviewed as $unreviewed_suggestion ) {
+			$unreviewed_clustered[ "post-{$unreviewed_suggestion->post_id}" ][] = $unreviewed_suggestion;
+		}
+	}
+
 	foreach ( $attachments as $item ) {
 		$return .= "\t<li class='attachment-{$item->ID}'>\r\n" .
 			"\t\t" . wp_get_attachment_image( $item->ID ) . "\r\n" .
-			"\t\t<ul class='term-list'>" . get_the_term_list( $item->ID, 'people', '<li>', '</li><li>', '</li>' ) . "</ul>\r\n";
+			"\t\t<ul class='term-list'>" .
+				get_the_term_list( $item->ID, 'people', '<li>', '</li><li>', '</li>' );
+
+		// Populate in the user's pending suggestions...
+		if ( isset( $unreviewed_clustered[ "post-{$item->ID}" ] ) ) {
+			foreach ( $unreviewed_clustered[ "post-{$item->ID}" ] as $unreviewed_suggestion ) {
+				$meta_value = maybe_unserialize( $unreviewed_suggestion->meta_value );
+				$return .= "<li>" . $meta_value['tag'] . "</li>";
+			}
+		}
+
+		$return .= "</ul>\r\n";
 
 		if ( current_user_can( 'cgt_tag_media' ) ) {
 			$return .= "\t\t" . sprintf( '<a class="add-tag hide-if-no-js" href="javascript:;" data-attachment-id="%d">%s</a>', $item->ID, __( '➕ Tag?', 'community-gallery-tags' ) ) . "\r\n";
