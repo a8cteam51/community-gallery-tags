@@ -232,7 +232,7 @@ function custom_gallery_tags__admin_page() {
 						<td>
 							<pre><?php echo esc_html( $proposal['tag'] ); ?></pre>
 							<?php if ( $proposal['user'] ) : ?>
-								<p>By User ID <strong><?php echo esc_html( $proposal['user'] ); ?></strong></p>
+								<p>By User <strong><?php echo esc_html( $proposal['user'] ); ?></strong></p>
 							<?php endif; ?>
 						</td>
 						<td>
