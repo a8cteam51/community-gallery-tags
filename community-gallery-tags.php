@@ -236,7 +236,7 @@ function custom_gallery_tags__admin_page() {
 							<?php endif; ?>
 						</td>
 						<td>
-							<?php echo get_the_term_list( $suggestion->post_id, 'people' ); ?>
+							<?php echo get_the_term_list( $suggestion->post_id, 'people', '', ', ', '' ); ?>
 						</td>
 						<td>
 							<form action="<?php echo admin_url( 'admin-post.php' ); ?>" method="post">
