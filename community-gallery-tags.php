@@ -285,16 +285,16 @@ function custom_gallery_tags__admin_page() {
 
 	?>
 	<div class="wrap">
-		<h1><?php _e( 'Custom Gallery Tags Management' ); ?></h1>
+		<h1><?php esc_html_e( 'Custom Gallery Tags Management' ); ?></h1>
 
 		<?php if ( count( $_to_review ) ) : ?>
 		<table>
 			<thead>
 				<tr>
-					<th>Attachment</th>
-					<th>Suggestion</th>
-					<th>Tags already on Media</th>
-					<th>Action</th>
+					<th><?php esc_html_e( 'Attachment' ); ?></th>
+					<th><?php esc_html_e( 'Suggestion' ); ?></th>
+					<th><?php esc_html_e( 'Tags already on Media' ); ?></th>
+					<th><?php esc_html_e( 'Action' ); ?></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -308,7 +308,7 @@ function custom_gallery_tags__admin_page() {
 						<td>
 							<pre><?php echo esc_html( $proposal['tag'] ); ?></pre>
 							<?php if ( $proposal['user'] ) : ?>
-								<p>By User <strong><?php echo esc_html( $proposal['user'] ); ?></strong></p>
+								<p><?php printf( __( 'By User <strong>%s</strong>' ), esc_html( $proposal['user'] ) ); ?></p>
 							<?php endif; ?>
 						</td>
 						<td>
@@ -324,14 +324,14 @@ function custom_gallery_tags__admin_page() {
 								<br />
 								<?php
 								submit_button(
-									'Add',
+									__( 'Add' ),
 									'primary small',
 									'add-tag',
 									false
 								);
 								echo "&nbsp;";
 								submit_button(
-									'Delete',
+									__( 'Delete' ),
 									'delete small',
 									'delete-suggestion',
 									false
