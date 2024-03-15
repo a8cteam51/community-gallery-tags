@@ -92,10 +92,12 @@ function community_gallery_tags_gallery__render_callback( $block_attributes, $co
 			'wp-util',
 			'wp-api-request',
 			'jquery',
+			'jquery-ui-dialog',
 		),
 		false,
 		true
 	);
+	wp_enqueue_style( 'wp-jquery-ui-dialog' );
 
 	$post_id = 0; // We can allow customizing this via block attributes if we'd like.  `0` will default to the global $post object on render.
 	$attachments = get_attached_media( 'image', $post_id ); // can change the first argument to an empty string if we want everything including videos.
@@ -108,7 +110,7 @@ function community_gallery_tags_gallery__render_callback( $block_attributes, $co
 			"\t\t<ul class='term-list'>" . get_the_term_list( $item->ID, 'people', '<li>', '</li><li>', '</li>' ) . "</ul>\r\n";
 
 		if ( current_user_can( 'cgt_tag_media' ) ) {
-			$return .= "\t\t" . sprintf( '<a class="add-tag" href="javascript:;" data-attachment-id="%d">%s</a>', $item->ID, __( '➕ Tag?', 'community-gallery-tags' ) ) . "\r\n";
+			$return .= "\t\t" . sprintf( '<a class="add-tag hide-if-no-js" href="javascript:;" data-attachment-id="%d">%s</a>', $item->ID, __( '➕ Tag?', 'community-gallery-tags' ) ) . "\r\n";
 		}
 
 		$return .= "\t</li>\r\n";
@@ -126,11 +128,26 @@ function community_gallery_tags_gallery__js_template() {
 			{{{ data.img_tag }}}
 			<ul class="term-list"></ul>
 			<?php if ( current_user_can( 'cgt_tag_media' ) ) : ?>
-			<a class="add-tag" href="javascript:;" data-attachment-id="{{ data.id }}"><?php _e( '➕ Tag?', 'community-gallery-tags' ) ?></a>
+			<a class="add-tag hide-if-no-js" href="javascript:;" data-attachment-id="{{ data.id }}"><?php _e( '➕ Tag?', 'community-gallery-tags' ) ?></a>
 			<?php endif; ?>
 		</div>
 	</script>
-	<?php
+
+	<?php if ( current_user_can( 'cgt_tag_media' ) ) : ?>
+	<div id="cgt-dialog-form" title="Tag Photo" class="hide-if-no-js">
+		<form>
+			<fieldset>
+				<input type="hidden" name="attachment_id" value="" />
+
+				<label for="cgt-tag">Person to Tag:</label><br />
+				<input type="text" name="tag" id="cgt-tag" value="" class="text ui-widget-content ui-corner-all">
+
+				<!-- Allow form submission with keyboard without duplicating the dialog button -->
+				<input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
+			</fieldset>
+		</form>
+	</div>
+	<?php endif;
 }
 
 /**
