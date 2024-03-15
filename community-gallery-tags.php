@@ -316,6 +316,7 @@ function custom_gallery_tags__admin_page() {
 						</td>
 						<td>
 							<form action="<?php echo admin_url( 'admin-post.php' ); ?>" method="post">
+								<?php wp_nonce_field( 'cgt_moderate_tags-' . $suggestion->meta_id, '_cgtnonce' ); ?>
 								<input name="action" type="hidden" value="cgt_moderate_tags" />
 								<input name="attachment_id" type="hidden" value="<?php echo esc_attr( $suggestion->post_id ); ?>" />
 								<input name="postmeta_id" type="hidden" value="<?php echo esc_attr( $suggestion->meta_id ); ?>" />
@@ -356,6 +357,8 @@ function custom_gallery_tags__admin_page() {
 add_action( 'admin_post_cgt_moderate_tags', function() {
 	$postmeta_id = intval( $_POST['postmeta_id'] );
 	$attachment_id = intval( $_POST['attachment_id'] );
+
+	check_admin_referer( 'cgt_moderate_tags-' . $postmeta_id, '_cgtnonce' );
 
 	if ( 'attachment' !== get_post_type( $attachment_id ) ) {
 		wp_die( new WP_Error( 'bad-attachment-id', __( 'The specified attachment ID does not seem to be valid.' ) ) );
