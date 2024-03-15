@@ -36,6 +36,34 @@ function cgt_add_categories_to_attachments() {
 add_action( 'init' , 'cgt_add_categories_to_attachments' );
 
 /**
+ * Modify archive pages for the specified taxonomy to include attachments.
+ *
+ * @param WP_Query $query
+ *
+ * @return WP_Query
+ */
+function cgt_include_attachments_in_people_pages( $query ) {
+	// Don't change anything admin-side.
+	if ( is_admin() ) {
+		return $query;
+	}
+
+	if ( $query->is_tax( 'people' ) ) {
+		// Make sure we enable all post types that it the taxonomy is enabled for.
+		$people = get_taxonomy( 'people' );
+		$query->set( 'post_type', $people->object_type );
+
+		// Attachments have the `inherit` post_status -- make sure we enable that.
+		$post_statii = (array) $query->get( 'post_status' );
+		$post_statii[] = 'inherit';
+		$query->set( 'post_status', array_unique( $post_statii ) );
+	}
+
+	return $query;
+}
+add_filter( 'pre_get_posts', 'cgt_include_attachments_in_people_pages' );
+
+/**
  * Registers the block using the metadata loaded from the `block.json` file.
  * Behind the scenes, it registers also all assets so they can be enqueued
  * through the block editor in the corresponding context.
