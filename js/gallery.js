@@ -26,6 +26,7 @@
 			},
 			close: function() {
 				$dialogForm[0].reset();
+				$dialogForm.find('input[name=attachment_id]').val('');
 				console.log( 'close' );
 			},
 			open: function() {
