@@ -131,7 +131,7 @@ function community_gallery_tags_gallery__render_callback( $block_attributes, $co
 		if ( isset( $unreviewed_clustered[ "post-{$item->ID}" ] ) ) {
 			foreach ( $unreviewed_clustered[ "post-{$item->ID}" ] as $unreviewed_suggestion ) {
 				$meta_value = maybe_unserialize( $unreviewed_suggestion->meta_value );
-				$return .= "<li>" . $meta_value['tag'] . "</li>";
+				$return .= "<li>" . esc_html( $meta_value['tag'] ) . "</li>";
 			}
 		}
 
