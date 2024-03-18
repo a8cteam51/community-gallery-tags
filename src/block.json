@@ -9,6 +9,7 @@
 	"description": "Block to display a gallery of photos, and enable visitors to suggest tags.",
 	"example": {},
 	"supports": {
+		"align": [ "center", "wide", "full" ],
 		"html": false
 	},
 	"textdomain": "community-gallery-tags",
