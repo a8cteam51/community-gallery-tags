@@ -6,9 +6,50 @@
  */
 
 .wp-block-community-gallery-tags-gallery {
-	background-color: #21759b;
-	color: #fff;
-	padding: 2px;
+	background: rgba( 0, 0, 0, 0.1 );
+	&.aligncenter {
+		.community-gallery-tags-gallery {
+			margin: 0 auto;
+		}
+	}
+
+	.community-gallery-tags-gallery {
+		background: rgba( 0, 0, 0, 0.1 );
+		padding: 0;
+		list-style-type: none;
+
+		> li {
+			position: relative;
+			background: rgba( 0, 0, 0, 0.2 );
+			margin: 1em;
+			width: 250px;
+			font-size: 0.8em;
+
+			img {
+				width: 100%;
+				height: auto;
+			}
+			ul.term-list {
+				padding: 0;
+				display: inline;
+
+				li {
+					display: inline;
+
+					&::after {
+						content: ', ';
+					}
+
+					&:last-child::after {
+						content: '';
+					}
+				}
+			}
+			a.add-tag {
+				font-style: italic;
+			}
+		}
+	}
 }
 
 #cgt-dialog-form {
