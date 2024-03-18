@@ -147,7 +147,7 @@ function community_gallery_tags_gallery__render_callback( $block_attributes, $co
 		$return .= "</ul>\r\n";
 
 		if ( current_user_can( 'cgt_tag_media' ) ) {
-			$return .= "\t\t" . sprintf( '<a class="add-tag hide-if-no-js" href="javascript:;" data-attachment-id="%d">%s</a>', $item->ID, __( '➕ Tag?', 'community-gallery-tags' ) ) . "\r\n";
+			$return .= "\t\t" . sprintf( '<a class="add-tag hide-if-no-js" href="javascript:;" data-attachment-id="%d">%s</a>', $item->ID, __( 'Suggest&nbsp;a&nbsp;Tag?', 'community-gallery-tags' ) ) . "\r\n";
 		}
 
 		$return .= "\t</li>\r\n";
@@ -169,7 +169,7 @@ function community_gallery_tags_gallery__js_template() {
 			{{{ data.img_tag }}}
 			<ul class="term-list"></ul>
 			<?php if ( current_user_can( 'cgt_tag_media' ) ) : ?>
-			<a class="add-tag hide-if-no-js" href="javascript:;" data-attachment-id="{{ data.id }}"><?php _e( '➕ Tag?', 'community-gallery-tags' ) ?></a>
+			<a class="add-tag hide-if-no-js" href="javascript:;" data-attachment-id="{{ data.id }}"><?php _e( 'Suggest&nbsp;a&nbsp;Tag?', 'community-gallery-tags' ) ?></a>
 			<?php endif; ?>
 		</div>
 	</script>
