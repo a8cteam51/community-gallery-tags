@@ -131,8 +131,8 @@ function community_gallery_tags_gallery__render_callback( $block_attributes, $co
 	$return .= "<ul class='community-gallery-tags-gallery'>\r\n"; // @todo: add support for adding classes to this `ul` in the block editor.
 
 	foreach ( $attachments as $item ) {
-		$return .= "\t<li class='attachment-{$item->ID}'>\r\n" .
 			"\t\t" . wp_get_attachment_image( $item->ID ) . "\r\n" .
+		$return .= "\t<li class='media attachment-{$item->ID}'>\r\n" .
 			"\t\t<ul class='term-list'>" .
 				get_the_term_list( $item->ID, 'people', '<li>', '</li><li>', '</li>' );
 
@@ -165,7 +165,7 @@ function community_gallery_tags_gallery__js_template() {
 		var ajaxurl = '<?php echo esc_js( admin_url( 'admin-ajax.php', 'relative' ) ); ?>'
 	</script>
 	<script type="text/html" id="tmpl-cgt-item">
-		<li class="attachment-{{ data.id }}">
+		<li class="media attachment-{{ data.id }}">
 			{{{ data.img_tag }}}
 			<ul class="term-list"></ul>
 			<?php if ( current_user_can( 'cgt_tag_media' ) ) : ?>
