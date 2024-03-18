@@ -103,6 +103,7 @@ function community_gallery_tags_gallery__render_callback( $block_attributes, $co
 			'jquery',
 			'jquery-ui-dialog',
 			'tags-suggest',
+			'masonry',
 		),
 		false,
 		true

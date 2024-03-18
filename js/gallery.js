@@ -62,6 +62,8 @@
 					$gallery.children( 'li.attachment-' + attachmentId ).find('.term-list').append( '<li data-meta-id="' + meta_id + '">' + tag + '</li>' );
 				});
 
+				$gallery.masonry(); // trigger a repositioning if needed.
+
 				$dialog.dialog( 'close' );
 			});
 		});
@@ -88,6 +90,11 @@
 		});
 	}
 
+	$gallery.masonry({
+		itemSelector: 'li.media',
+		isFitWidth: true,
+	});
+
 	/**
 	 * Listen for notifications of image upload.  If one happened, toss it into the gallery.
 	 */
@@ -99,6 +106,8 @@
 			id:        data.id,
 			img_tag:   '<img src="" />',
 		} ) );
+
+		$gallery.masonry(); // trigger a repositioning if needed.
 	});
 
 }( jQuery, wp ));
