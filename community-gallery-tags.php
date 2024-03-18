@@ -112,8 +112,6 @@ function community_gallery_tags_gallery__render_callback( $block_attributes, $co
 	$post_id = 0; // We can allow customizing this via block attributes if we'd like.  `0` will default to the global $post object on render.
 	$attachments = get_attached_media( 'image', $post_id ); // can change the first argument to an empty string if we want everything including videos.
 
-	$return = "<ul class='community-gallery-tags-gallery'>\r\n"; // @todo: add support for adding classes to this `ul` in the block editor.
-
 	// Get the user's unreviewed suggestions, so we can show them.
 	$unreviewed = $wpdb->get_results(
 		$wpdb->prepare(
@@ -128,6 +126,9 @@ function community_gallery_tags_gallery__render_callback( $block_attributes, $co
 			$unreviewed_clustered[ "post-{$unreviewed_suggestion->post_id}" ][] = $unreviewed_suggestion;
 		}
 	}
+
+	$return = '<div ' . get_block_wrapper_attributes() . ">\r\n";
+	$return .= "<ul class='community-gallery-tags-gallery'>\r\n"; // @todo: add support for adding classes to this `ul` in the block editor.
 
 	foreach ( $attachments as $item ) {
 		$return .= "\t<li class='attachment-{$item->ID}'>\r\n" .
@@ -153,6 +154,7 @@ function community_gallery_tags_gallery__render_callback( $block_attributes, $co
 	}
 
 	$return .= "</ul>\r\n";
+	$return .= "</div>\r\n";
 
 	return $return;
 }

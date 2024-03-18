@@ -4,6 +4,7 @@
  *
  * @see https://developer.wordpress.org/block-editor/reference-guides/packages/packages-block-editor/#useblockprops
  */
+import { useBlockProps } from '@wordpress/block-editor';
 import { RawHTML } from '@wordpress/element';
 
 /**
@@ -19,5 +20,7 @@ export default function save() {
 	/**
 	 * Generic fallback.  If the plugin is removed, this will still display a gallery with the attached images.
 	 */
-	return <RawHTML>{ '[gallery]' }</RawHTML>;
+	return <div { ...useBlockProps.save() }>
+				<RawHTML>{ '[gallery]' }</RawHTML>
+			</div>;
 }
