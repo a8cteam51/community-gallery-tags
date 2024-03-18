@@ -28,7 +28,6 @@
 			close: function() {
 				$dialogForm[0].reset();
 				$dialogForm.find('input[name=attachment_id]').val('');
-				console.log( 'close' );
 			},
 			open: function() {
 				$('.ui-widget-overlay').bind( 'click', function() {
@@ -56,8 +55,6 @@
 				method: 'POST',
 				dataType: 'json'
 			}).done( ( response ) => {
-				console.log( response );
-
 				$.each( response, function( meta_id, tag ) {
 					$gallery.children( 'li.attachment-' + attachmentId ).find('.term-list').append( '<li data-meta-id="' + meta_id + '">' + tag + '</li>' );
 				});
