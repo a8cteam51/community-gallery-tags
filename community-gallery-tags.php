@@ -199,12 +199,36 @@ function community_gallery_tags_gallery__js_template() {
 add_filter( 'map_meta_cap', function ( array $caps, string $cap ) {
 	switch ( $cap ) {
 		case 'cgt_tag_media':
+			// To avoid a loop, just make sure this never maps to `get_taxonomy( 'people' )->cap->assign_terms`.
 			$caps = array( 'exist' );
 			break;
 	}
 
 	return $caps;
 }, 1, 2 );
+
+add_filter( 'user_has_cap', function( $allcaps, $caps, $args, $user ) {
+	// Only override if we're doing the ajax tag search...
+	if ( doing_action( 'wp_ajax_ajax-tag-search') ) {
+		$people = get_taxonomy( 'people' );
+
+		// If the user already has the capability, do nothing.
+		if ( ! empty( $allcaps[ $people->cap->assign_terms ] ) ) {
+			return $allcaps;
+		}
+
+		// If the current check cares about whether the user can assign terms...
+		if ( in_array( $people->cap->assign_terms, (array) $caps ) ) {
+			// If we would ordinarily allow them to suggest tags (even though suggestion isn't directly adding) ...
+			if ( $user->has_cap( 'cgt_tag_media' ) ) {
+				// Then let's allow this permission check for the moment so they can query our taxonomy.
+				$allcaps[ $people->cap->assign_terms ] = true;
+			}
+		}
+	}
+
+	return $allcaps;
+});
 
 add_action( 'rest_api_init', function() {
 	register_rest_route(
