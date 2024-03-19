@@ -228,7 +228,7 @@ add_filter( 'user_has_cap', function( $allcaps, $caps, $args, $user ) {
 	}
 
 	return $allcaps;
-});
+}, 10, 4 );
 
 add_action( 'rest_api_init', function() {
 	register_rest_route(
