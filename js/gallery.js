@@ -95,14 +95,14 @@
 	/**
 	 * Listen for notifications of image upload.  If one happened, toss it into the gallery.
 	 */
-	document.body.addEventListener( 'uploadedGalleryImage', function(e) {
-		console.log( "Listening to 'uploadedGalleryImage' event." );
-		console.log( e )
-
-		$gallery.append( tmplCgtItem( {
-			id:        data.id,
-			img_tag:   '<img src="" />',
-		} ) );
+	document.body.addEventListener( 'imagesUploaded', function(e) {
+		$.each( e.detail.images, function( index, image ) {
+			const $newItem = $( tmplCgtItem( {
+				id:        image.id,
+				img_tag:   image.description.rendered
+			} ) );
+			$gallery.append( $newItem ).masonry( 'appended', $newItem );
+		});
 
 		$gallery.masonry(); // trigger a repositioning if needed.
 	});
