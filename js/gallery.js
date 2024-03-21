@@ -72,7 +72,7 @@
 			e.preventDefault();
 
 			const $element = $(e.target);
-			const attachmentId = $element.data('attachment-id');
+			const attachmentId = $element.data('media-id');
 
 			$dialog.dialog('open');
 

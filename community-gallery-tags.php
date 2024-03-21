@@ -128,11 +128,11 @@ function community_gallery_tags_gallery__render_callback( $block_attributes, $co
 		}
 	}
 
-	$return = '<div ' . get_block_wrapper_attributes() . ">\r\n";
-	$return .= "<ul class='community-gallery-tags-gallery'>\r\n"; // @todo: add support for adding classes to this `ul` in the block editor.
+	$return = '<div ' . get_block_wrapper_attributes( array( 'class' => 'gallery' ) ) . ">\r\n";
+	$return .= "<ul class='community-gallery-tags-gallery'>\r\n";
 
 	foreach ( $attachments as $item ) {
-		$return .= "\t<li class='media attachment-{$item->ID}'>\r\n" .
+		$return .= "\t<li class='media gallery-item attachment-{$item->ID}'>\r\n" .
 			"\t\t" . wp_get_attachment_image( $item->ID, 'medium' ) . "\r\n" .
 			"\t\t<ul class='term-list'>" .
 				get_the_term_list( $item->ID, 'people', '<li>', '</li><li>', '</li>' );
@@ -148,7 +148,7 @@ function community_gallery_tags_gallery__render_callback( $block_attributes, $co
 		$return .= "</ul>\r\n";
 
 		if ( current_user_can( 'cgt_tag_media' ) ) {
-			$return .= "\t\t" . sprintf( '<a class="add-tag hide-if-no-js" href="javascript:;" data-attachment-id="%d">%s</a>', $item->ID, __( 'Suggest&nbsp;a&nbsp;Tag?', 'community-gallery-tags' ) ) . "\r\n";
+			$return .= "\t\t" . sprintf( '<a class="add-tag hide-if-no-js" href="javascript:;" data-media-id="%d">%s</a>', $item->ID, __( 'Suggest&nbsp;a&nbsp;Tag?', 'community-gallery-tags' ) ) . "\r\n";
 		}
 
 		$return .= "\t</li>\r\n";
@@ -157,7 +157,9 @@ function community_gallery_tags_gallery__render_callback( $block_attributes, $co
 	$return .= "</ul>\r\n";
 	$return .= "</div>\r\n";
 
-	return $return;
+	// Overrides to trick Jetpack Carousel into working --
+	$block_attributes['blockName'] = 'core/gallery';
+	return apply_filters( 'render_block_core/gallery', $return, $block_attributes );
 }
 
 function community_gallery_tags_gallery__js_template() {
@@ -170,7 +172,7 @@ function community_gallery_tags_gallery__js_template() {
 			{{{ data.img_tag }}}
 			<ul class="term-list"></ul>
 			<?php if ( current_user_can( 'cgt_tag_media' ) ) : ?>
-			<a class="add-tag hide-if-no-js" href="javascript:;" data-attachment-id="{{ data.id }}"><?php _e( 'Suggest&nbsp;a&nbsp;Tag?', 'community-gallery-tags' ) ?></a>
+			<a class="add-tag hide-if-no-js" href="javascript:;" data-media-id="{{ data.id }}"><?php _e( 'Suggest&nbsp;a&nbsp;Tag?', 'community-gallery-tags' ) ?></a>
 			<?php endif; ?>
 		</div>
 	</script>
