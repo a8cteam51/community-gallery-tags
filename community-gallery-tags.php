@@ -148,7 +148,7 @@ function community_gallery_tags_gallery__render_callback( $block_attributes, $co
 		$return .= "</ul>\r\n";
 
 		if ( current_user_can( 'cgt_tag_media' ) ) {
-			$return .= "\t\t" . sprintf( '<a class="add-tag hide-if-no-js" href="javascript:;" data-media-id="%d">%s</a>', $item->ID, __( 'Suggest&nbsp;a&nbsp;Tag?', 'community-gallery-tags' ) ) . "\r\n";
+			$return .= "\t\t<span class='gallery-caption'>" . sprintf( '<a class="add-tag hide-if-no-js" href="javascript:;" data-media-id="%d">%s</a>', $item->ID, __( 'Suggest&nbsp;a&nbsp;Tag?', 'community-gallery-tags' ) ) . "</span>\r\n";
 		}
 
 		$return .= "\t</li>\r\n";
