@@ -159,7 +159,17 @@ function community_gallery_tags_gallery__render_callback( $block_attributes, $co
 
 	// Overrides to trick Jetpack Carousel into working --
 	$block_attributes['blockName'] = 'core/gallery';
-	return apply_filters( 'render_block_core/gallery', $return, $block_attributes );
+	$return = apply_filters( 'render_block_core/gallery', $return, $block_attributes );
+
+	if ( current_user_can( get_taxonomy( 'people' )->cap->assign_terms ) ) {
+		$unreviewed_total = (int) $wpdb->get_var( "SELECT COUNT(*) FROM `{$wpdb->postmeta}` WHERE `meta_key` = '_cgt_suggested_tag'" );
+
+		if ( $unreviewed_total > 0 ) {
+			$return = '<p>' . sprintf( __( 'There are currently <a href="%s" target="_blank">%d tag submissions to review.</a>' ), esc_url( admin_url( 'upload.php?page=cgt-management' ) ), $unreviewed_total ) . "</a></p>\r\n" . $return;
+		}
+	}
+
+	return $return;
 }
 
 function community_gallery_tags_gallery__js_template() {
@@ -301,7 +311,7 @@ add_action( 'admin_menu', function() {
 	$hook_suffix = add_media_page(
 		__( 'Custom Gallery Tags Management' ),
 		__( 'CGT Admin' ),
-		'upload_files',
+		get_taxonomy( 'people' )->cap->assign_terms,
 		'cgt-management',
 		'custom_gallery_tags__admin_page'
 	);
