@@ -192,8 +192,9 @@ function community_gallery_tags_gallery__js_template() {
 		<form>
 			<input type="hidden" name="attachment_id" value="" />
 
-			<label for="cgt-tag">Person to Tag:</label><br />
+			<label for="cgt-tag"><?php esc_html_e( 'Name to Tag:' ); ?></label>
 			<input type="text" name="tag" id="cgt-tag" value="" class="text ui-widget-content ui-corner-all">
+			<label for="cgt-tag" class="helper-text"><?php esc_html_e( 'Multiple tags can be seperated by commas.' ); ?></label>
 
 			<!-- Allow form submission with keyboard without duplicating the dialog button -->
 			<input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
