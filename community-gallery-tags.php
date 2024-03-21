@@ -202,32 +202,28 @@ function community_gallery_tags_gallery__js_template() {
 	<?php endif;
 }
 
-/**
- * If you'd like to override this to check other caps, use a later priority!
- *
- * `exist` will work for even unauthenticated users.
- * `read` will require login.
- */
-add_filter( 'map_meta_cap', function ( array $caps, string $cap ) {
-	switch ( $cap ) {
-		case 'cgt_tag_media':
-			// To avoid a loop, just make sure this never maps to `get_taxonomy( 'people' )->cap->assign_terms`.
-			$caps = array( 'exist' );
-			break;
+add_filter( 'user_has_cap', function( $allcaps, $caps, $args, $user ) {
+	// If one of our checks for `cgt_tag_media` happens, always grant it if the user can assign terms to the people taxonomy already.
+	if ( in_array( 'cgt_tag_media', $caps ) ) {
+		if ( ! empty( $allcaps[ get_taxonomy( 'people' )->cap->assign_terms ] ) ) {
+			$allcaps['cgt_tag_media'] = true;
+		}
 	}
 
-	return $caps;
-}, 1, 2 );
-
-add_filter( 'user_has_cap', function( $allcaps, $caps, $args, $user ) {
 	// Only override if we're doing the ajax tag search...
 	if ( doing_action( 'wp_ajax_ajax-tag-search') ) {
-		$people = get_taxonomy( 'people' );
-
-		// If the user already has the capability, do nothing.
-		if ( ! empty( $allcaps[ $people->cap->assign_terms ] ) ) {
+		// If they don't need more caps than what they've got, return early.
+		$needs_additional_caps = false;
+		foreach ( $caps as $cap ) {
+			if ( empty( $allcaps[ $cap ] ) ) {
+				$needs_additional_caps = true;
+			}
+		}
+		if ( ! $needs_additional_caps ) {
 			return $allcaps;
 		}
+
+		$people = get_taxonomy( 'people' );
 
 		// If the current check cares about whether the user can assign terms...
 		if ( in_array( $people->cap->assign_terms, (array) $caps ) ) {
