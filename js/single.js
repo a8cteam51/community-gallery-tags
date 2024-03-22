@@ -63,7 +63,7 @@
 		/**
 		 * Set up the click event that will open the dialog.
 		 */
-		$gallery.on( 'click', 'a.add-tag', function(e) {
+		$('a.add-tag').on( 'click', function(e) {
 			e.preventDefault();
 
 			const $element = $(e.target);
