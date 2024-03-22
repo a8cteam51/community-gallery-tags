@@ -218,6 +218,34 @@ function community_gallery_tags_single__render_callback( $block_attributes, $con
 	return $return;
 }
 
+/**
+ * Add the user's prior suggestions to the output.
+ */
+add_filter( 'term_links-people', function( $term_links ) {
+	global $wpdb;
+
+	// Only append if we're on a `people` taxonomy page.
+	if ( is_tax( 'people' ) ) {
+		// Get the user's unreviewed suggestions, so we can show them.
+		$unreviewed = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT * FROM `{$wpdb->postmeta}` WHERE `meta_key` = '_cgt_suggested_tag' AND `meta_value` LIKE '%%\"%s\"%%' AND `post_id` = %d",
+				wp_get_current_user()->user_login,
+				get_the_ID()
+			)
+		);
+
+		if ( $unreviewed ) {
+			foreach ( $unreviewed as $unreviewed_suggestion ) {
+				$meta_value = maybe_unserialize( $unreviewed_suggestion->meta_value );
+				$term_links[] = esc_html( $meta_value['tag'] );
+			}
+		}
+	}
+
+	return $term_links;
+} );
+
 function community_gallery_tags_gallery__js_template() {
 	?>
 	<script>
