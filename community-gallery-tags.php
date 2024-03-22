@@ -72,9 +72,15 @@ add_filter( 'pre_get_posts', 'cgt_include_attachments_in_people_pages' );
  */
 function community_gallery_tags_gallery_block_init() {
 	register_block_type(
-		__DIR__ . '/build',
+		__DIR__ . '/build/gallery',
 		array(
 			'render_callback' => 'community_gallery_tags_gallery__render_callback',
+		)
+	);
+	register_block_type(
+		__DIR__ . '/build/single',
+		array(
+			'render_callback' => 'community_gallery_tags_single__render_callback',
 		)
 	);
 }
@@ -168,6 +174,46 @@ function community_gallery_tags_gallery__render_callback( $block_attributes, $co
 			$return = '<p>' . sprintf( __( 'There are currently <a href="%s" target="_blank">%d tag submissions to review.</a>' ), esc_url( admin_url( 'upload.php?page=cgt-management' ) ), $unreviewed_total ) . "</a></p>\r\n" . $return;
 		}
 	}
+
+	return $return;
+}
+
+function community_gallery_tags_single__render_callback( $block_attributes, $content ) {
+	// We're only tagging attachments.
+	if ( 'attachment' !== get_post_type() ) {
+		return null;
+	}
+
+	// Don't bother if the current user can't see it.
+	if ( ! current_user_can( 'cgt_tag_media' ) ) {
+		return null;
+	}
+
+	add_action( 'wp_footer', 'community_gallery_tags_gallery__js_template' );
+
+	/**
+	 * This is normally only registered for wp-admin usage, so we have to do it manually.
+	 */
+	wp_register_script( 'tags-suggest', "/wp-admin/js/tags-suggest.min.js", array( 'jquery-ui-autocomplete', 'wp-a11y' ) );
+	wp_set_script_translations( 'tags-suggest' );
+
+	wp_enqueue_script(
+		'community-gallery-tags-single',
+		plugins_url( 'js/single.js', __FILE__ ),
+		array(
+			'wp-api-request',
+			'jquery',
+			'jquery-ui-dialog',
+			'tags-suggest',
+		),
+		false,
+		true
+	);
+	wp_enqueue_style( 'wp-jquery-ui-dialog' );
+
+	$return = '<div ' . get_block_wrapper_attributes() . ">\r\n";
+	$return .= "\t" . sprintf( '<a class="add-tag hide-if-no-js" href="javascript:;" data-media-id="%d">%s</a>', get_the_ID(), __( 'Suggest&nbsp;a&nbsp;Tag?', 'community-gallery-tags' ) ) . "\r\n";
+	$return .= '</div>';
 
 	return $return;
 }

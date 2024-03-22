@@ -1,0 +1,71 @@
+/**
+ * The following styles get applied both on the front of your site
+ * and in the editor.
+ *
+ * Replace them with your own styles or remove the file completely.
+ */
+
+.wp-block-community-gallery-tags-gallery {
+
+	&.aligncenter {
+		.community-gallery-tags-gallery {
+			margin: 0 auto;
+		}
+	}
+
+	.community-gallery-tags-gallery {
+
+		padding: 0;
+		list-style-type: none;
+
+		> li {
+			position: relative;
+
+			margin: 1em;
+			width: 250px;
+			font-size: 0.8em;
+
+			img {
+				width: 100%;
+				height: auto;
+			}
+			ul.term-list {
+				padding: 0;
+				display: inline;
+
+				li {
+					display: inline;
+
+					&::after {
+						content: ', ';
+					}
+
+					&:last-child::after {
+						content: '';
+					}
+				}
+			}
+			a.add-tag {
+				font-style: italic;
+			}
+		}
+	}
+}
+
+#cgt-dialog-form {
+	input#cgt-tag {
+		width: 100%;
+	}
+}
+
+.ui-autocomplete.wp-tags-autocomplete {
+	position: absolute;
+	top: 0;
+	left: 0;
+	cursor: default;
+
+	background: #fff;
+	border: 1px solid #888;
+	list-style-type: none;
+	padding: 0 0.3em;
+}

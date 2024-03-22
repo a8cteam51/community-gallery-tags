@@ -1,0 +1,22 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "community-gallery-tags/single",
+  "version": "0.1.0",
+  "title": "Suggest a Tag",
+  "category": "media",
+  "icon": "format-gallery",
+  "description": "Suggest a Tag for Media Library Items",
+  "example": {},
+  "supports": {
+    "align": [
+      "center",
+      "wide",
+      "full"
+    ],
+    "html": false
+  },
+  "textdomain": "community-gallery-tags",
+  "editorScript": "file:./index.js",
+  "style": "file:./style-index.css"
+}
