@@ -135,7 +135,7 @@ function community_gallery_tags_gallery__render_callback( $block_attributes, $co
 		$return .= "\t<li class='media gallery-item attachment-{$item->ID}'>\r\n" .
 			"\t\t" . wp_get_attachment_image( $item->ID, 'medium' ) . "\r\n" .
 			"\t\t<ul class='term-list'>" .
-				get_the_term_list( $item->ID, 'people', '<li>', '</li><li>', '</li>' );
+				get_the_term_list( $item->ID, 'people', '<li class="gallery-caption">', '</li><li class="gallery-caption">', '</li>' );
 
 		// Populate in the user's pending suggestions...
 		if ( isset( $unreviewed_clustered[ "post-{$item->ID}" ] ) ) {
