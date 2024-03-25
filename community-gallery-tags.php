@@ -139,7 +139,9 @@ function community_gallery_tags_gallery__render_callback( $block_attributes, $co
 
 	foreach ( $attachments as $item ) {
 		$return .= "\t<li class='media gallery-item attachment-{$item->ID}'>\r\n" .
+			"\t<a href='" . esc_url( get_attachment_link( $item->ID ) ) . "'>\r\n" .
 			"\t\t" . wp_get_attachment_image( $item->ID, 'medium' ) . "\r\n" .
+			"\t</a>\r\n" .
 			"\t\t<ul class='term-list'>" .
 				get_the_term_list( $item->ID, 'people', '<li class="gallery-caption">', '</li><li class="gallery-caption">', '</li>' );
 
