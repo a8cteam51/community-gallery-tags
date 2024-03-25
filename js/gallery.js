@@ -91,6 +91,8 @@
 	$gallery.masonry({
 		itemSelector: 'li.media',
 		isFitWidth: true,
+		columnWidth: 250,
+		gutter: 20
 	});
 
 	/**
