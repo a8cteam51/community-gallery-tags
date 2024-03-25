@@ -136,7 +136,7 @@ function community_gallery_tags_gallery__render_callback( $block_attributes, $co
 
 	$return = '<div ' . get_block_wrapper_attributes( array( 'class' => 'gallery' ) ) . ">\r\n";
 
-	$return .= '<p id="cgt-filters">';
+	$return .= '<p id="cgt-filters" class="gallery-caption">';
 	$return .= '<a href="javascript:;" class="all-images selected" data-uploader-id="">' . esc_html__( 'All Images' ) . '</a> ';
 	$return .= '<a href="javascript:;" class="my-images" data-uploader-id="' . esc_attr( get_current_user_id() ) . '">' . esc_html__( 'My Uploads' ) . '</a>';
 	$return .= '</p>';
