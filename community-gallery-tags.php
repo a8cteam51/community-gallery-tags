@@ -135,10 +135,16 @@ function community_gallery_tags_gallery__render_callback( $block_attributes, $co
 	}
 
 	$return = '<div ' . get_block_wrapper_attributes( array( 'class' => 'gallery' ) ) . ">\r\n";
+
+	$return .= '<p id="cgt-filters">';
+	$return .= '<a href="javascript:;" class="all-images selected" data-uploader-id="">' . esc_html__( 'All Images' ) . '</a> ';
+	$return .= '<a href="javascript:;" class="my-images" data-uploader-id="' . esc_attr( get_current_user_id() ) . '">' . esc_html__( 'My Uploads' ) . '</a>';
+	$return .= '</p>';
+
 	$return .= "<ul class='community-gallery-tags-gallery'>\r\n";
 
 	foreach ( $attachments as $item ) {
-		$return .= "\t<li class='media gallery-item attachment-{$item->ID}'>\r\n" .
+		$return .= "\t<li class='media gallery-item attachment-{$item->ID} uploader-id-{$item->post_author}'>\r\n" .
 			"\t<a href='" . esc_url( get_attachment_link( $item->ID ) ) . "'>\r\n" .
 			"\t\t" . wp_get_attachment_image( $item->ID, 'medium' ) . "\r\n" .
 			"\t</a>\r\n" .
@@ -254,8 +260,8 @@ function community_gallery_tags_gallery__js_template() {
 		var ajaxurl = '<?php echo esc_js( admin_url( 'admin-ajax.php', 'relative' ) ); ?>'
 	</script>
 	<script type="text/html" id="tmpl-cgt-item">
-		<li class="media attachment-{{ data.id }}">
-			{{{ data.img_tag }}}
+		<li class="media attachment-{{ data.id }} uploader-id-{{ data.uploader }}">
+			<a href="{{ data.link }}">{{{ data.img_tag }}}</a>
 			<ul class="term-list"></ul>
 			<?php if ( current_user_can( 'cgt_tag_media' ) ) : ?>
 			<a class="add-tag hide-if-no-js" href="javascript:;" data-media-id="{{ data.id }}"><?php _e( 'Suggest&nbsp;a&nbsp;Tag?', 'community-gallery-tags' ) ?></a>

@@ -2,6 +2,7 @@
 	const tmplCgtItem = wp.template( 'cgt-item' );
 	const $gallery = $('ul.community-gallery-tags-gallery');
 	const $dialogEl = $('#cgt-dialog-form');
+	const $galleryFilters = $('#cgt-filters');
 
 	// Only bother with this stuff if we have the dialog form.  The dialog form will only render if the user can tag.
 	if ( $dialogEl.length ) {
@@ -99,12 +100,29 @@
 		$.each( e.detail.images, function( index, image ) {
 			const $newItem = $( tmplCgtItem( {
 				id:        image.id,
+				uploader:  image.post_author,
+				link:      image.link,
 				img_tag:   image.description.rendered
 			} ) );
 			$gallery.append( $newItem ).masonry( 'appended', $newItem );
 		});
 
 		$gallery.masonry(); // trigger a repositioning if needed.
+	});
+
+	$galleryFilters.on( 'click', 'a', function(e){
+		e.preventDefault();
+		const $target = $( e.target );
+		$target.addClass('selected').siblings('.selected').removeClass('selected');
+		const uploaderId = $target.data('uploader-id');
+
+		if ( uploaderId ) {
+			$gallery.children( 'li.media').not( '.uploader-id-' + uploaderId ).addClass('hidden');
+		} else {
+			$gallery.children( 'li.media.hidden' ).removeClass('hidden');
+		}
+
+		$gallery.masonry();
 	});
 
 }( jQuery, wp ));

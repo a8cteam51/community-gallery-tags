@@ -13,18 +13,27 @@
 		}
 	}
 
+	#cgt-filters {
+		.selected {
+			font-weight: 700;
+		}
+	}
+
 	.community-gallery-tags-gallery {
 
 		padding: 0;
 		list-style-type: none;
 
-		> li {
+		> li.media {
 			position: relative;
 
 			margin: 1em;
 			width: 250px;
 			font-size: 0.8em;
 
+			&.hidden {
+				display: none;
+			}
 			img {
 				width: 100%;
 				height: auto;
