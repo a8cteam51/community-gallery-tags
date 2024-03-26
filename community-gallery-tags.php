@@ -26,6 +26,7 @@ function cgt_add_categories_to_attachments() {
 			'label'             => __( 'People' ),
 			'sort'              => true,
 			'show_in_rest'      => true,
+			'public'            => true,
 			'show_admin_column' => true,
 			'rewrite'           => array(
 				'slug' => 'person'
@@ -228,6 +229,28 @@ function community_gallery_tags_single__render_callback( $block_attributes, $con
 
 	return $return;
 }
+
+/**
+ * Make sure that if there are suggestions -- even if no attached terms -- that it will show *something*.
+ */
+function filter_post_terms_block( $content, $parsed_block ) {
+	if ( ! empty( $content ) ) {
+		return $content;
+	}
+
+	if ( isset( $parsed_block['attrs']['term'] ) && 'people' === $parsed_block['attrs']['term'] ) {
+		// the suggestions are already esc_html'd down below.
+		$term_link_suggestions = apply_filters( 'term_links-people', array() );
+		if ( $term_link_suggestions ) {
+			$content = '<div class="taxonomy-people has-text-align-center wp-block-post-terms has-small-font-size">';
+			$content .= implode( ', ', $term_link_suggestions );
+			$content .= '</div>';
+		}
+	}
+
+	return $content;
+}
+add_filter( 'render_block_core/post-terms', 'filter_post_terms_block', 20, 2 );
 
 /**
  * Add the user's prior suggestions to the output.
