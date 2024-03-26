@@ -235,8 +235,8 @@ function community_gallery_tags_single__render_callback( $block_attributes, $con
 add_filter( 'term_links-people', function( $term_links ) {
 	global $wpdb;
 
-	// Only append if we're on a `people` taxonomy page.
-	if ( is_tax( 'people' ) ) {
+	// Only append if we're on a `people` taxonomy page or an attachment page for a post that has the tagging gallery.
+	if ( is_tax( 'people' ) || ( is_attachment() && has_block( 'community-gallery-tags/gallery', get_post_parent() ) ) ) {
 		// Get the user's unreviewed suggestions, so we can show them.
 		$unreviewed = $wpdb->get_results(
 			$wpdb->prepare(
