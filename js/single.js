@@ -54,7 +54,14 @@
 				dataType: 'json'
 			}).done( ( response ) => {
 				$.each( response, function( meta_id, tag ) {
-					$('.post-' + attachmentId + '.type-attachment').find( '.taxonomy-people.wp-block-post-terms' ).append( '<span class="wp-block-post-terms__separator">, </span>' + tag );
+					const $attachment = $( '.post-' + attachmentId + '.type-attachment, attachmentid-' + attachmentId );
+					const $tagList = $attachment.find( '.taxonomy-people.wp-block-post-terms' );
+
+					if ( $tagList.length ) {
+						$tagList.append( '<span class="wp-block-post-terms__separator">, </span>' + tag );
+					} else {
+						$attachment.find('.wp-block-community-gallery-tags-single').before( '<div class="taxonomy-people has-text-align-center wp-block-post-terms has-small-font-size">' + tag + '</div>' );
+					}
 				});
 				$dialog.dialog( 'close' );
 			});
