@@ -100,13 +100,15 @@
 	 */
 	document.body.addEventListener( 'imagesUploaded', function(e) {
 		$.each( e.detail.images, function( index, image ) {
-			const $newItem = $( tmplCgtItem( {
-				id:        image.id,
-				uploader:  image.post_author,
-				link:      image.link,
-				img_tag:   image.description.rendered
-			} ) );
-			$gallery.append( $newItem ).masonry( 'appended', $newItem );
+			if ( image.id ) {
+				const $newItem = $( tmplCgtItem( {
+					id:        image.id,
+					uploader:  image.author,
+					link:      image.link,
+					img_tag:   image.description.rendered
+				} ) );
+				$gallery.prepend( $newItem ).masonry( 'prepended', $newItem );
+			}
 		});
 
 		$gallery.masonry(); // trigger a repositioning if needed.

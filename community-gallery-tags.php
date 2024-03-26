@@ -117,7 +117,10 @@ function community_gallery_tags_gallery__render_callback( $block_attributes, $co
 	wp_enqueue_style( 'wp-jquery-ui-dialog' );
 
 	$post_id = 0; // We can allow customizing this via block attributes if we'd like.  `0` will default to the global $post object on render.
+
+	add_filter( 'get_attached_media', 'array_reverse' );
 	$attachments = get_attached_media( 'image', $post_id ); // can change the first argument to an empty string if we want everything including videos.
+	remove_filter( 'get_attached_media', 'array_reverse' );
 
 	// Get the user's unreviewed suggestions, so we can show them.
 	$unreviewed = $wpdb->get_results(
