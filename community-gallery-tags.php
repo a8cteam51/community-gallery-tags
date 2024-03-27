@@ -29,12 +29,12 @@ function cgt_add_categories_to_attachments() {
 			'public'            => true,
 			'show_admin_column' => true,
 			'rewrite'           => array(
-				'slug' => 'person'
+				'slug' => 'person',
 			),
 		)
 	);
 }
-add_action( 'init' , 'cgt_add_categories_to_attachments' );
+add_action( 'init', 'cgt_add_categories_to_attachments' );
 
 /**
  * Modify archive pages for the specified taxonomy to include attachments.
@@ -55,7 +55,7 @@ function cgt_include_attachments_in_people_pages( $query ) {
 		$query->set( 'post_type', $people->object_type );
 
 		// Attachments have the `inherit` post_status -- make sure we enable that.
-		$post_statii = (array) $query->get( 'post_status' );
+		$post_statii   = (array) $query->get( 'post_status' );
 		$post_statii[] = 'inherit';
 		$query->set( 'post_status', array_unique( $post_statii ) );
 	}
@@ -98,7 +98,7 @@ function community_gallery_tags_gallery__render_callback( $block_attributes, $co
 	/**
 	 * This is normally only registered for wp-admin usage, so we have to do it manually.
 	 */
-	wp_register_script( 'tags-suggest', "/wp-admin/js/tags-suggest.min.js", array( 'jquery-ui-autocomplete', 'wp-a11y' ) );
+	wp_register_script( 'tags-suggest', '/wp-admin/js/tags-suggest.min.js', array( 'jquery-ui-autocomplete', 'wp-a11y' ) );
 	wp_set_script_translations( 'tags-suggest' );
 
 	wp_enqueue_script(
@@ -159,7 +159,7 @@ function community_gallery_tags_gallery__render_callback( $block_attributes, $co
 		if ( isset( $unreviewed_clustered[ "post-{$item->ID}" ] ) ) {
 			foreach ( $unreviewed_clustered[ "post-{$item->ID}" ] as $unreviewed_suggestion ) {
 				$meta_value = maybe_unserialize( $unreviewed_suggestion->meta_value );
-				$return .= "<li>" . esc_html( $meta_value['tag'] ) . "</li>";
+				$return    .= '<li>' . esc_html( $meta_value['tag'] ) . '</li>';
 			}
 		}
 
@@ -177,13 +177,13 @@ function community_gallery_tags_gallery__render_callback( $block_attributes, $co
 
 	// Overrides to trick Jetpack Carousel into working --
 	$block_attributes['blockName'] = 'core/gallery';
-	$return = apply_filters( 'render_block_core/gallery', $return, $block_attributes );
+	$return                        = apply_filters( 'render_block_core/gallery', $return, $block_attributes );
 
 	if ( current_user_can( get_taxonomy( 'people' )->cap->assign_terms ) ) {
 		$unreviewed_total = (int) $wpdb->get_var( "SELECT COUNT(*) FROM `{$wpdb->postmeta}` WHERE `meta_key` = '_cgt_suggested_tag'" );
 
 		if ( $unreviewed_total > 0 ) {
-			$return = '<p>' . sprintf( __( 'There are currently <a href="%s" target="_blank">%d tag submissions to review.</a>' ), esc_url( admin_url( 'upload.php?page=cgt-management' ) ), $unreviewed_total ) . "</a></p>\r\n" . $return;
+			$return = '<p>' . sprintf( __( 'There are currently <a href="%1$s" target="_blank">%2$d tag submissions to review.</a>' ), esc_url( admin_url( 'upload.php?page=cgt-management' ) ), $unreviewed_total ) . "</a></p>\r\n" . $return;
 		}
 	}
 
@@ -206,7 +206,7 @@ function community_gallery_tags_single__render_callback( $block_attributes, $con
 	/**
 	 * This is normally only registered for wp-admin usage, so we have to do it manually.
 	 */
-	wp_register_script( 'tags-suggest', "/wp-admin/js/tags-suggest.min.js", array( 'jquery-ui-autocomplete', 'wp-a11y' ) );
+	wp_register_script( 'tags-suggest', '/wp-admin/js/tags-suggest.min.js', array( 'jquery-ui-autocomplete', 'wp-a11y' ) );
 	wp_set_script_translations( 'tags-suggest' );
 
 	wp_enqueue_script(
@@ -223,7 +223,7 @@ function community_gallery_tags_single__render_callback( $block_attributes, $con
 	);
 	wp_enqueue_style( 'wp-jquery-ui-dialog' );
 
-	$return = '<div ' . get_block_wrapper_attributes() . ">\r\n";
+	$return  = '<div ' . get_block_wrapper_attributes() . ">\r\n";
 	$return .= "\t" . sprintf( '<a class="add-tag hide-if-no-js" href="javascript:;" data-media-id="%d">%s</a>', get_the_ID(), __( '＋&nbsp;Tag&nbsp;Name', 'community-gallery-tags' ) ) . "\r\n";
 	$return .= '</div>';
 
@@ -242,7 +242,7 @@ function filter_post_terms_block( $content, $parsed_block ) {
 		// the suggestions are already esc_html'd down below.
 		$term_link_suggestions = apply_filters( 'term_links-people', array() );
 		if ( $term_link_suggestions ) {
-			$content = '<div class="taxonomy-people has-text-align-center wp-block-post-terms has-small-font-size">';
+			$content  = '<div class="taxonomy-people has-text-align-center wp-block-post-terms has-small-font-size">';
 			$content .= implode( ', ', $term_link_suggestions );
 			$content .= '</div>';
 		}
@@ -255,30 +255,33 @@ add_filter( 'render_block_core/post-terms', 'filter_post_terms_block', 20, 2 );
 /**
  * Add the user's prior suggestions to the output.
  */
-add_filter( 'term_links-people', function( $term_links ) {
-	global $wpdb;
+add_filter(
+	'term_links-people',
+	function ( $term_links ) {
+		global $wpdb;
 
-	// Only append if we're on a `people` taxonomy page or an attachment page for a post that has the tagging gallery.
-	if ( is_tax( 'people' ) || ( is_attachment() && has_block( 'community-gallery-tags/gallery', get_post_parent() ) ) ) {
-		// Get the user's unreviewed suggestions, so we can show them.
-		$unreviewed = $wpdb->get_results(
-			$wpdb->prepare(
-				"SELECT * FROM `{$wpdb->postmeta}` WHERE `meta_key` = '_cgt_suggested_tag' AND `meta_value` LIKE '%%\"%s\"%%' AND `post_id` = %d",
-				wp_get_current_user()->user_login,
-				get_the_ID()
-			)
-		);
+		// Only append if we're on a `people` taxonomy page or an attachment page for a post that has the tagging gallery.
+		if ( is_tax( 'people' ) || ( is_attachment() && has_block( 'community-gallery-tags/gallery', get_post_parent() ) ) ) {
+			// Get the user's unreviewed suggestions, so we can show them.
+			$unreviewed = $wpdb->get_results(
+				$wpdb->prepare(
+					"SELECT * FROM `{$wpdb->postmeta}` WHERE `meta_key` = '_cgt_suggested_tag' AND `meta_value` LIKE '%%\"%s\"%%' AND `post_id` = %d",
+					wp_get_current_user()->user_login,
+					get_the_ID()
+				)
+			);
 
-		if ( $unreviewed ) {
-			foreach ( $unreviewed as $unreviewed_suggestion ) {
-				$meta_value = maybe_unserialize( $unreviewed_suggestion->meta_value );
-				$term_links[] = esc_html( $meta_value['tag'] );
+			if ( $unreviewed ) {
+				foreach ( $unreviewed as $unreviewed_suggestion ) {
+					$meta_value   = maybe_unserialize( $unreviewed_suggestion->meta_value );
+					$term_links[] = esc_html( $meta_value['tag'] );
+				}
 			}
 		}
-	}
 
-	return $term_links;
-} );
+		return $term_links;
+	}
+);
 
 function community_gallery_tags_gallery__js_template() {
 	?>
@@ -290,7 +293,7 @@ function community_gallery_tags_gallery__js_template() {
 			<a href="{{ data.link }}">{{{ data.img_tag }}}</a>
 			<ul class="term-list"></ul>
 			<?php if ( current_user_can( 'cgt_tag_media' ) ) : ?>
-			<a class="add-tag hide-if-no-js" href="javascript:;" data-media-id="{{ data.id }}"><?php _e( '＋&nbsp;Tag&nbsp;Name', 'community-gallery-tags' ) ?></a>
+			<a class="add-tag hide-if-no-js" href="javascript:;" data-media-id="{{ data.id }}"><?php _e( '＋&nbsp;Tag&nbsp;Name', 'community-gallery-tags' ); ?></a>
 			<?php endif; ?>
 		</div>
 	</script>
@@ -308,69 +311,78 @@ function community_gallery_tags_gallery__js_template() {
 			<input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
 		</form>
 	</div>
-	<?php endif;
+		<?php
+	endif;
 }
 
-add_filter( 'user_has_cap', function( $allcaps, $caps, $args, $user ) {
-	// If one of our checks for `cgt_tag_media` happens, always grant it if the user can assign terms to the people taxonomy already.
-	if ( in_array( 'cgt_tag_media', $caps ) ) {
-		if ( ! empty( $allcaps[ get_taxonomy( 'people' )->cap->assign_terms ] ) ) {
-			$allcaps['cgt_tag_media'] = true;
-		}
-	}
-
-	// Only override if we're doing the ajax tag search...
-	if ( doing_action( 'wp_ajax_ajax-tag-search') ) {
-		// If they don't need more caps than what they've got, return early.
-		$needs_additional_caps = false;
-		foreach ( $caps as $cap ) {
-			if ( empty( $allcaps[ $cap ] ) ) {
-				$needs_additional_caps = true;
+add_filter(
+	'user_has_cap',
+	function ( $allcaps, $caps, $args, $user ) {
+		// If one of our checks for `cgt_tag_media` happens, always grant it if the user can assign terms to the people taxonomy already.
+		if ( in_array( 'cgt_tag_media', $caps ) ) {
+			if ( ! empty( $allcaps[ get_taxonomy( 'people' )->cap->assign_terms ] ) ) {
+				$allcaps['cgt_tag_media'] = true;
 			}
 		}
-		if ( ! $needs_additional_caps ) {
-			return $allcaps;
-		}
 
-		$people = get_taxonomy( 'people' );
+		// Only override if we're doing the ajax tag search...
+		if ( doing_action( 'wp_ajax_ajax-tag-search' ) ) {
+			// If they don't need more caps than what they've got, return early.
+			$needs_additional_caps = false;
+			foreach ( $caps as $cap ) {
+				if ( empty( $allcaps[ $cap ] ) ) {
+					$needs_additional_caps = true;
+				}
+			}
+			if ( ! $needs_additional_caps ) {
+				return $allcaps;
+			}
 
-		// If the current check cares about whether the user can assign terms...
-		if ( in_array( $people->cap->assign_terms, (array) $caps ) ) {
-			// If we would ordinarily allow them to suggest tags (even though suggestion isn't directly adding) ...
-			if ( $user->has_cap( 'cgt_tag_media' ) ) {
-				// Then let's allow this permission check for the moment so they can query our taxonomy.
-				$allcaps[ $people->cap->assign_terms ] = true;
+			$people = get_taxonomy( 'people' );
+
+			// If the current check cares about whether the user can assign terms...
+			if ( in_array( $people->cap->assign_terms, (array) $caps ) ) {
+				// If we would ordinarily allow them to suggest tags (even though suggestion isn't directly adding) ...
+				if ( $user->has_cap( 'cgt_tag_media' ) ) {
+					// Then let's allow this permission check for the moment so they can query our taxonomy.
+					$allcaps[ $people->cap->assign_terms ] = true;
+				}
 			}
 		}
-	}
 
-	return $allcaps;
-}, 10, 4 );
+		return $allcaps;
+	},
+	10,
+	4
+);
 
-add_action( 'rest_api_init', function() {
-	register_rest_route(
-		'community-gallery-tags/v1',
-		'/suggest-tag',
-		array(
-			'methods'             => 'POST',
-			'callback'            => 'community_gallery_tags_endpoint__suggest_tag',
-			'args'                => array(
-				'attachment_id' => array(
-					'validate_callback' => function( $param, $request, $key ) {
-						return is_numeric( $param );
-					}
+add_action(
+	'rest_api_init',
+	function () {
+		register_rest_route(
+			'community-gallery-tags/v1',
+			'/suggest-tag',
+			array(
+				'methods'             => 'POST',
+				'callback'            => 'community_gallery_tags_endpoint__suggest_tag',
+				'args'                => array(
+					'attachment_id' => array(
+						'validate_callback' => function ( $param, $request, $key ) {
+							return is_numeric( $param );
+						},
+					),
+					'tag'           => array(
+						'type'     => 'string',
+						'required' => true,
+					),
 				),
-				'tag'           => array(
-					'type'     => 'string',
-					'required' => true,
-				)
-			),
-			'permission_callback' => function() {
-				return current_user_can( 'cgt_tag_media' );
-			},
-		)
-	);
-});
+				'permission_callback' => function () {
+					return current_user_can( 'cgt_tag_media' );
+				},
+			)
+		);
+	}
+);
 
 /**
  * REST API Endpoint -- take the suggestion, shove it into postmeta for the attachment.
@@ -395,8 +407,8 @@ function community_gallery_tags_endpoint__suggest_tag( WP_REST_Request $request 
 			$attachment_id,
 			'_cgt_suggested_tag',
 			array(
-				'tag' => $tag,
-				'user' => wp_get_current_user()->user_login
+				'tag'  => $tag,
+				'user' => wp_get_current_user()->user_login,
 			)
 		);
 
@@ -412,15 +424,18 @@ function community_gallery_tags_endpoint__suggest_tag( WP_REST_Request $request 
 
 // Add the admin page to view and manage the suggestions --
 
-add_action( 'admin_menu', function() {
-	$hook_suffix = add_media_page(
-		__( 'Custom Gallery Tags Management' ),
-		__( 'CGT Admin' ),
-		get_taxonomy( 'people' )->cap->assign_terms,
-		'cgt-management',
-		'custom_gallery_tags__admin_page'
-	);
-});
+add_action(
+	'admin_menu',
+	function () {
+		$hook_suffix = add_media_page(
+			__( 'Custom Gallery Tags Management' ),
+			__( 'CGT Admin' ),
+			get_taxonomy( 'people' )->cap->assign_terms,
+			'cgt-management',
+			'custom_gallery_tags__admin_page'
+		);
+	}
+);
 
 function custom_gallery_tags__admin_page() {
 	global $wpdb;
@@ -442,7 +457,8 @@ function custom_gallery_tags__admin_page() {
 				</tr>
 			</thead>
 			<tbody>
-				<?php foreach ( $_to_review as $suggestion ) :
+				<?php
+				foreach ( $_to_review as $suggestion ) :
 					$proposal = maybe_unserialize( $suggestion->meta_value );
 					?>
 					<tr>
@@ -473,7 +489,7 @@ function custom_gallery_tags__admin_page() {
 									'add-tag',
 									false
 								);
-								echo "&nbsp;";
+								echo '&nbsp;';
 								submit_button(
 									__( 'Delete' ),
 									'delete small',
@@ -498,34 +514,37 @@ function custom_gallery_tags__admin_page() {
 /**
  * Fallback for sans-javascript-hijinks.
  */
-add_action( 'admin_post_cgt_moderate_tags', function() {
-	$postmeta_id = intval( $_POST['postmeta_id'] );
-	$attachment_id = intval( $_POST['attachment_id'] );
+add_action(
+	'admin_post_cgt_moderate_tags',
+	function () {
+		$postmeta_id   = intval( $_POST['postmeta_id'] );
+		$attachment_id = intval( $_POST['attachment_id'] );
 
-	check_admin_referer( 'cgt_moderate_tags-' . $postmeta_id, '_cgtnonce' );
+		check_admin_referer( 'cgt_moderate_tags-' . $postmeta_id, '_cgtnonce' );
 
-	if ( 'attachment' !== get_post_type( $attachment_id ) ) {
-		wp_die( new WP_Error( 'bad-attachment-id', __( 'The specified attachment ID does not seem to be valid.' ) ) );
-	}
-
-	if ( isset( $_POST['add-tag'] ) ) {
-		$new_tag = sanitize_text_field( $_POST['tag'] );
-
-		$result = wp_set_post_terms(
-			$attachment_id,
-			$new_tag,
-			'people',
-			true // IMPORTANT! Don't replace, just append.
-		);
-
-		if ( $result ) {
-			delete_metadata_by_mid( 'post', (int) $postmeta_id );
+		if ( 'attachment' !== get_post_type( $attachment_id ) ) {
+			wp_die( new WP_Error( 'bad-attachment-id', __( 'The specified attachment ID does not seem to be valid.' ) ) );
 		}
-	} elseif ( isset( $_POST['delete-suggestion'] ) ) {
-		$result = delete_metadata_by_mid( 'post', (int) $postmeta_id );
-	} else {
-		// No recognized action.  Do nothing.
-	}
 
-	wp_safe_redirect( admin_url( 'upload.php?page=cgt-management' ) );
-} );
+		if ( isset( $_POST['add-tag'] ) ) {
+			$new_tag = sanitize_text_field( $_POST['tag'] );
+
+			$result = wp_set_post_terms(
+				$attachment_id,
+				$new_tag,
+				'people',
+				true // IMPORTANT! Don't replace, just append.
+			);
+
+			if ( $result ) {
+				delete_metadata_by_mid( 'post', (int) $postmeta_id );
+			}
+		} elseif ( isset( $_POST['delete-suggestion'] ) ) {
+			$result = delete_metadata_by_mid( 'post', (int) $postmeta_id );
+		} else {
+			// No recognized action.  Do nothing.
+		}
+
+		wp_safe_redirect( admin_url( 'upload.php?page=cgt-management' ) );
+	}
+);
