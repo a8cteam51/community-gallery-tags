@@ -166,7 +166,7 @@ function community_gallery_tags_gallery__render_callback( $block_attributes, $co
 		$return .= "</ul>\r\n";
 
 		if ( current_user_can( 'cgt_tag_media' ) ) {
-			$return .= "\t\t<span class='gallery-caption'>" . sprintf( '<a class="add-tag hide-if-no-js" href="javascript:;" data-media-id="%d">%s</a>', $item->ID, __( 'Suggest&nbsp;a&nbsp;Tag?', 'community-gallery-tags' ) ) . "</span>\r\n";
+			$return .= "\t\t<span class='gallery-caption'>" . sprintf( '<a class="add-tag hide-if-no-js" href="javascript:;" data-media-id="%d">%s</a>', $item->ID, __( '＋&nbsp;Tag&nbsp;Name', 'community-gallery-tags' ) ) . "</span>\r\n";
 		}
 
 		$return .= "\t</li>\r\n";
@@ -224,7 +224,7 @@ function community_gallery_tags_single__render_callback( $block_attributes, $con
 	wp_enqueue_style( 'wp-jquery-ui-dialog' );
 
 	$return = '<div ' . get_block_wrapper_attributes() . ">\r\n";
-	$return .= "\t" . sprintf( '<a class="add-tag hide-if-no-js" href="javascript:;" data-media-id="%d">%s</a>', get_the_ID(), __( 'Suggest&nbsp;a&nbsp;Tag?', 'community-gallery-tags' ) ) . "\r\n";
+	$return .= "\t" . sprintf( '<a class="add-tag hide-if-no-js" href="javascript:;" data-media-id="%d">%s</a>', get_the_ID(), __( '＋&nbsp;Tag&nbsp;Name', 'community-gallery-tags' ) ) . "\r\n";
 	$return .= '</div>';
 
 	return $return;
@@ -290,7 +290,7 @@ function community_gallery_tags_gallery__js_template() {
 			<a href="{{ data.link }}">{{{ data.img_tag }}}</a>
 			<ul class="term-list"></ul>
 			<?php if ( current_user_can( 'cgt_tag_media' ) ) : ?>
-			<a class="add-tag hide-if-no-js" href="javascript:;" data-media-id="{{ data.id }}"><?php _e( 'Suggest&nbsp;a&nbsp;Tag?', 'community-gallery-tags' ) ?></a>
+			<a class="add-tag hide-if-no-js" href="javascript:;" data-media-id="{{ data.id }}"><?php _e( '＋&nbsp;Tag&nbsp;Name', 'community-gallery-tags' ) ?></a>
 			<?php endif; ?>
 		</div>
 	</script>
