@@ -17,13 +17,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 /**
  * Register `people` taxonomy for use on attachments.
+ *
+ * @return void
  */
 function cgt_add_categories_to_attachments() {
 	register_taxonomy(
 		'people',
 		'attachment',
 		array(
-			'label'             => __( 'People' ),
+			'label'             => __( 'People', 'community-gallery-tags' ),
 			'sort'              => true,
 			'show_in_rest'      => true,
 			'public'            => true,
@@ -39,7 +41,7 @@ add_action( 'init', 'cgt_add_categories_to_attachments' );
 /**
  * Modify archive pages for the specified taxonomy to include attachments.
  *
- * @param WP_Query $query
+ * @param WP_Query $query The query we're modifying.
  *
  * @return WP_Query
  */
@@ -70,6 +72,8 @@ add_filter( 'pre_get_posts', 'cgt_include_attachments_in_people_pages' );
  * through the block editor in the corresponding context.
  *
  * @see https://developer.wordpress.org/reference/functions/register_block_type/
+ *
+ * @return void
  */
 function community_gallery_tags_gallery_block_init() {
 	register_block_type(
@@ -89,8 +93,12 @@ add_action( 'init', 'community_gallery_tags_gallery_block_init' );
 
 /**
  * Render callback for the Community Gallery Tags - Gallery block.
+ *
+ * @param mixed $block_attributes The attributes set on the block.
+ *
+ * @return string
  */
-function community_gallery_tags_gallery__render_callback( $block_attributes, $content ) {
+function community_gallery_tags_gallery__render_callback( $block_attributes ) {
 	global $wpdb;
 
 	add_action( 'wp_footer', 'community_gallery_tags_gallery__js_template' );
@@ -98,7 +106,7 @@ function community_gallery_tags_gallery__render_callback( $block_attributes, $co
 	/**
 	 * This is normally only registered for wp-admin usage, so we have to do it manually.
 	 */
-	wp_register_script( 'tags-suggest', '/wp-admin/js/tags-suggest.min.js', array( 'jquery-ui-autocomplete', 'wp-a11y' ) );
+	wp_register_script( 'tags-suggest', '/wp-admin/js/tags-suggest.min.js', array( 'jquery-ui-autocomplete', 'wp-a11y' ), $GLOBALS['wp_version'], true );
 	wp_set_script_translations( 'tags-suggest' );
 
 	wp_enqueue_script(
@@ -126,8 +134,8 @@ function community_gallery_tags_gallery__render_callback( $block_attributes, $co
 	// Get the user's unreviewed suggestions, so we can show them.
 	$unreviewed = $wpdb->get_results(
 		$wpdb->prepare(
-			"SELECT * FROM `{$wpdb->postmeta}` WHERE `meta_key` = '_cgt_suggested_tag' AND `meta_value` LIKE '%%\"%s\"%%' ORDER BY `post_id` ASC",
-			wp_get_current_user()->user_login
+			"SELECT * FROM `{$wpdb->postmeta}` WHERE `meta_key` = '_cgt_suggested_tag' AND `meta_value` LIKE %s ORDER BY `post_id` ASC",
+			'%\"' . $wpdb->esc_like( wp_get_current_user()->user_login ) . '\"%'
 		)
 	);
 
@@ -141,8 +149,8 @@ function community_gallery_tags_gallery__render_callback( $block_attributes, $co
 	$return = '<div ' . get_block_wrapper_attributes( array( 'class' => 'gallery' ) ) . ">\r\n";
 
 	$return .= '<p id="cgt-filters" class="gallery-caption">';
-	$return .= '<a href="javascript:;" class="all-images selected" data-uploader-id="">' . esc_html__( 'All Images' ) . '</a> ';
-	$return .= '<a href="javascript:;" class="my-images" data-uploader-id="' . esc_attr( get_current_user_id() ) . '">' . esc_html__( 'My Uploads' ) . '</a>';
+	$return .= '<a href="javascript:;" class="all-images selected" data-uploader-id="">' . esc_html__( 'All Images', 'community-gallery-tags' ) . '</a> ';
+	$return .= '<a href="javascript:;" class="my-images" data-uploader-id="' . esc_attr( get_current_user_id() ) . '">' . esc_html__( 'My Uploads', 'community-gallery-tags' ) . '</a>';
 	$return .= '</p>';
 
 	$return .= "<ul class='community-gallery-tags-gallery'>\r\n";
@@ -177,20 +185,28 @@ function community_gallery_tags_gallery__render_callback( $block_attributes, $co
 
 	// Overrides to trick Jetpack Carousel into working --
 	$block_attributes['blockName'] = 'core/gallery';
-	$return                        = apply_filters( 'render_block_core/gallery', $return, $block_attributes );
+
+	// phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores, WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+	$return = apply_filters( 'render_block_core/gallery', $return, $block_attributes );
 
 	if ( current_user_can( get_taxonomy( 'people' )->cap->assign_terms ) ) {
 		$unreviewed_total = (int) $wpdb->get_var( "SELECT COUNT(*) FROM `{$wpdb->postmeta}` WHERE `meta_key` = '_cgt_suggested_tag'" );
 
 		if ( $unreviewed_total > 0 ) {
-			$return = '<p>' . sprintf( __( 'There are currently <a href="%1$s" target="_blank">%2$d tag submissions to review.</a>' ), esc_url( admin_url( 'upload.php?page=cgt-management' ) ), $unreviewed_total ) . "</a></p>\r\n" . $return;
+			// translators: 1: link to admin page, 2: qty unreviewed submissions
+			$return = '<p>' . sprintf( __( 'There are currently <a href="%1$s" target="_blank">%2$d tag submissions to review.</a>', 'community-gallery-tags' ), esc_url( admin_url( 'upload.php?page=cgt-management' ) ), $unreviewed_total ) . "</a></p>\r\n" . $return;
 		}
 	}
 
 	return $return;
 }
 
-function community_gallery_tags_single__render_callback( $block_attributes, $content ) {
+/**
+ * Render callback for dynamic block -- just the "add tag" for archive / single attachment page.
+ *
+ * @return string
+ */
+function community_gallery_tags_single__render_callback() {
 	// We're only tagging attachments.
 	if ( 'attachment' !== get_post_type() ) {
 		return null;
@@ -206,7 +222,7 @@ function community_gallery_tags_single__render_callback( $block_attributes, $con
 	/**
 	 * This is normally only registered for wp-admin usage, so we have to do it manually.
 	 */
-	wp_register_script( 'tags-suggest', '/wp-admin/js/tags-suggest.min.js', array( 'jquery-ui-autocomplete', 'wp-a11y' ) );
+	wp_register_script( 'tags-suggest', '/wp-admin/js/tags-suggest.min.js', array( 'jquery-ui-autocomplete', 'wp-a11y' ), $GLOBALS['wp_version'], true );
 	wp_set_script_translations( 'tags-suggest' );
 
 	wp_enqueue_script(
@@ -232,14 +248,20 @@ function community_gallery_tags_single__render_callback( $block_attributes, $con
 
 /**
  * Make sure that if there are suggestions -- even if no attached terms -- that it will show *something*.
+ *
+ * @param string $content      The generated content for the terms block.
+ * @param array  $parsed_block The properties on the block in the editor.
+ *
+ * @return string
  */
-function filter_post_terms_block( $content, $parsed_block ) {
+function cgt_filter_post_terms_block( $content, $parsed_block ) {
 	if ( ! empty( $content ) ) {
 		return $content;
 	}
 
 	if ( isset( $parsed_block['attrs']['term'] ) && 'people' === $parsed_block['attrs']['term'] ) {
 		// the suggestions are already esc_html'd down below.
+		// phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores, WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 		$term_link_suggestions = apply_filters( 'term_links-people', array() );
 		if ( $term_link_suggestions ) {
 			$content  = '<div class="taxonomy-people has-text-align-center wp-block-post-terms has-small-font-size">';
@@ -250,7 +272,7 @@ function filter_post_terms_block( $content, $parsed_block ) {
 
 	return $content;
 }
-add_filter( 'render_block_core/post-terms', 'filter_post_terms_block', 20, 2 );
+add_filter( 'render_block_core/post-terms', 'cgt_filter_post_terms_block', 20, 2 );
 
 /**
  * Add the user's prior suggestions to the output.
@@ -265,8 +287,8 @@ add_filter(
 			// Get the user's unreviewed suggestions, so we can show them.
 			$unreviewed = $wpdb->get_results(
 				$wpdb->prepare(
-					"SELECT * FROM `{$wpdb->postmeta}` WHERE `meta_key` = '_cgt_suggested_tag' AND `meta_value` LIKE '%%\"%s\"%%' AND `post_id` = %d",
-					wp_get_current_user()->user_login,
+					"SELECT * FROM `{$wpdb->postmeta}` WHERE `meta_key` = '_cgt_suggested_tag' AND `meta_value` LIKE %s AND `post_id` = %d",
+					'%\"' . $wpdb->esc_like( wp_get_current_user()->user_login ) . '\"%',
 					get_the_ID()
 				)
 			);
@@ -283,6 +305,11 @@ add_filter(
 	}
 );
 
+/**
+ * Output relevant js templates that be needed for our tag work.
+ *
+ * @return void
+ */
 function community_gallery_tags_gallery__js_template() {
 	?>
 	<script>
@@ -293,7 +320,7 @@ function community_gallery_tags_gallery__js_template() {
 			<a href="{{ data.link }}">{{{ data.img_tag }}}</a>
 			<ul class="term-list"></ul>
 			<?php if ( current_user_can( 'cgt_tag_media' ) ) : ?>
-			<a class="add-tag hide-if-no-js" href="javascript:;" data-media-id="{{ data.id }}"><?php _e( '＋&nbsp;Tag&nbsp;Name', 'community-gallery-tags' ); ?></a>
+			<a class="add-tag hide-if-no-js" href="javascript:;" data-media-id="{{ data.id }}"><?php esc_html_e( '＋&nbsp;Tag&nbsp;Name', 'community-gallery-tags' ); ?></a>
 			<?php endif; ?>
 		</div>
 	</script>
@@ -303,9 +330,9 @@ function community_gallery_tags_gallery__js_template() {
 		<form>
 			<input type="hidden" name="attachment_id" value="" />
 
-			<label for="cgt-tag"><?php esc_html_e( 'Name to Tag:' ); ?></label>
+			<label for="cgt-tag"><?php esc_html_e( 'Name to Tag:', 'community-gallery-tags' ); ?></label>
 			<input type="text" name="tag" id="cgt-tag" value="" class="text ui-widget-content ui-corner-all">
-			<label for="cgt-tag" class="helper-text"><?php esc_html_e( 'Multiple tags can be seperated by commas.' ); ?></label>
+			<label for="cgt-tag" class="helper-text"><?php esc_html_e( 'Multiple tags can be seperated by commas.', 'community-gallery-tags' ); ?></label>
 
 			<!-- Allow form submission with keyboard without duplicating the dialog button -->
 			<input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
@@ -319,7 +346,7 @@ add_filter(
 	'user_has_cap',
 	function ( $allcaps, $caps, $args, $user ) {
 		// If one of our checks for `cgt_tag_media` happens, always grant it if the user can assign terms to the people taxonomy already.
-		if ( in_array( 'cgt_tag_media', $caps ) ) {
+		if ( in_array( 'cgt_tag_media', $caps, true ) ) {
 			if ( ! empty( $allcaps[ get_taxonomy( 'people' )->cap->assign_terms ] ) ) {
 				$allcaps['cgt_tag_media'] = true;
 			}
@@ -341,7 +368,7 @@ add_filter(
 			$people = get_taxonomy( 'people' );
 
 			// If the current check cares about whether the user can assign terms...
-			if ( in_array( $people->cap->assign_terms, (array) $caps ) ) {
+			if ( in_array( $people->cap->assign_terms, (array) $caps, true ) ) {
 				// If we would ordinarily allow them to suggest tags (even though suggestion isn't directly adding) ...
 				if ( $user->has_cap( 'cgt_tag_media' ) ) {
 					// Then let's allow this permission check for the moment so they can query our taxonomy.
@@ -367,7 +394,7 @@ add_action(
 				'callback'            => 'community_gallery_tags_endpoint__suggest_tag',
 				'args'                => array(
 					'attachment_id' => array(
-						'validate_callback' => function ( $param, $request, $key ) {
+						'validate_callback' => function ( $param ) {
 							return is_numeric( $param );
 						},
 					),
@@ -386,14 +413,18 @@ add_action(
 
 /**
  * REST API Endpoint -- take the suggestion, shove it into postmeta for the attachment.
+ *
+ * @param \WP_REST_Request $request The incoming REST API request.
+ *
+ * @return \WP_REST_Response
  */
 function community_gallery_tags_endpoint__suggest_tag( WP_REST_Request $request ) {
-	$comma         = _x( ',', 'tag delimiter' );
+	$comma         = _x( ',', 'tag delimiter', 'community-gallery-tags' );
 	$raw_tag       = $request->get_param( 'tag' );
 	$attachment_id = $request->get_param( 'attachment_id' );
 
 	if ( 'attachment' !== get_post_type( $attachment_id ) ) {
-		return new WP_Error( 'bad-attachment-id', __( 'The specified attachment ID does not seem to be valid.' ) );
+		return new WP_Error( 'bad-attachment-id', __( 'The specified attachment ID does not seem to be valid.', 'community-gallery-tags' ) );
 	}
 
 	$tags = explode( $comma, $raw_tag );
@@ -428,32 +459,37 @@ add_action(
 	'admin_menu',
 	function () {
 		$hook_suffix = add_media_page(
-			__( 'Custom Gallery Tags Management' ),
-			__( 'CGT Admin' ),
+			__( 'Community Gallery Tags Management', 'community-gallery-tags' ),
+			__( 'CGT Admin', 'community-gallery-tags' ),
 			get_taxonomy( 'people' )->cap->assign_terms,
 			'cgt-management',
-			'custom_gallery_tags__admin_page'
+			'community_gallery_tags__admin_page'
 		);
 	}
 );
 
-function custom_gallery_tags__admin_page() {
+/**
+ * Admin page for CGT
+ *
+ * @return void
+ */
+function community_gallery_tags__admin_page() {
 	global $wpdb;
 
 	$_to_review = $wpdb->get_results( "SELECT * FROM `{$wpdb->postmeta}` WHERE `meta_key` = '_cgt_suggested_tag' ORDER BY `post_id` ASC" );
 
 	?>
 	<div class="wrap">
-		<h1><?php esc_html_e( 'Custom Gallery Tags Management' ); ?></h1>
+		<h1><?php esc_html_e( 'Custom Gallery Tags Management', 'community-gallery-tags' ); ?></h1>
 
 		<?php if ( count( $_to_review ) ) : ?>
 		<table>
 			<thead>
 				<tr>
-					<th><?php esc_html_e( 'Attachment' ); ?></th>
-					<th><?php esc_html_e( 'Suggestion' ); ?></th>
-					<th><?php esc_html_e( 'Tags already on Media' ); ?></th>
-					<th><?php esc_html_e( 'Action' ); ?></th>
+					<th><?php esc_html_e( 'Attachment', 'community-gallery-tags' ); ?></th>
+					<th><?php esc_html_e( 'Suggestion', 'community-gallery-tags' ); ?></th>
+					<th><?php esc_html_e( 'Tags already on Media', 'community-gallery-tags' ); ?></th>
+					<th><?php esc_html_e( 'Action', 'community-gallery-tags' ); ?></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -468,14 +504,15 @@ function custom_gallery_tags__admin_page() {
 						<td>
 							<pre><?php echo esc_html( $proposal['tag'] ); ?></pre>
 							<?php if ( $proposal['user'] ) : ?>
-								<p><?php printf( __( 'By User <strong>%s</strong>' ), esc_html( $proposal['user'] ) ); ?></p>
+								<?php /* translators: %s: User login. */ ?>
+								<p><?php printf( __( 'By User <strong>%s</strong>', 'community-gallery-tags' ), esc_html( $proposal['user'] ) ); ?></p>
 							<?php endif; ?>
 						</td>
 						<td>
 							<?php echo get_the_term_list( $suggestion->post_id, 'people', '', ', ', '' ); ?>
 						</td>
 						<td>
-							<form action="<?php echo admin_url( 'admin-post.php' ); ?>" method="post">
+							<form action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" method="post">
 								<?php wp_nonce_field( 'cgt_moderate_tags-' . $suggestion->meta_id, '_cgtnonce' ); ?>
 								<input name="action" type="hidden" value="cgt_moderate_tags" />
 								<input name="attachment_id" type="hidden" value="<?php echo esc_attr( $suggestion->post_id ); ?>" />
@@ -484,14 +521,14 @@ function custom_gallery_tags__admin_page() {
 								<br />
 								<?php
 								submit_button(
-									__( 'Add' ),
+									__( 'Add', 'community-gallery-tags' ),
 									'primary small',
 									'add-tag',
 									false
 								);
 								echo '&nbsp;';
 								submit_button(
-									__( 'Delete' ),
+									__( 'Delete', 'community-gallery-tags' ),
 									'delete small',
 									'delete-suggestion',
 									false
@@ -504,7 +541,7 @@ function custom_gallery_tags__admin_page() {
 			</tbody>
 		</table>
 		<?php else : ?>
-			<p><?php esc_html_e( 'There are no pending suggestions for tags on your media items.' ); ?></p>
+			<p><?php esc_html_e( 'There are no pending suggestions for tags on your media items.', 'community-gallery-tags' ); ?></p>
 		<?php endif; ?>
 
 	</div>
@@ -517,13 +554,13 @@ function custom_gallery_tags__admin_page() {
 add_action(
 	'admin_post_cgt_moderate_tags',
 	function () {
+		check_admin_referer( 'cgt_moderate_tags-' . $_POST['postmeta_id'], '_cgtnonce' );
+
 		$postmeta_id   = intval( $_POST['postmeta_id'] );
 		$attachment_id = intval( $_POST['attachment_id'] );
 
-		check_admin_referer( 'cgt_moderate_tags-' . $postmeta_id, '_cgtnonce' );
-
 		if ( 'attachment' !== get_post_type( $attachment_id ) ) {
-			wp_die( new WP_Error( 'bad-attachment-id', __( 'The specified attachment ID does not seem to be valid.' ) ) );
+			wp_die( new WP_Error( 'bad-attachment-id', esc_html__( 'The specified attachment ID does not seem to be valid.', 'community-gallery-tags' ) ) );
 		}
 
 		if ( isset( $_POST['add-tag'] ) ) {
@@ -541,8 +578,6 @@ add_action(
 			}
 		} elseif ( isset( $_POST['delete-suggestion'] ) ) {
 			$result = delete_metadata_by_mid( 'post', (int) $postmeta_id );
-		} else {
-			// No recognized action.  Do nothing.
 		}
 
 		wp_safe_redirect( admin_url( 'upload.php?page=cgt-management' ) );
