@@ -112,7 +112,7 @@ function community_gallery_tags_gallery__render_callback( $block_attributes, $co
 			'tags-suggest',
 			'masonry',
 		),
-		false,
+		'27mar2024',
 		true
 	);
 	wp_enqueue_style( 'wp-jquery-ui-dialog' );
@@ -218,7 +218,7 @@ function community_gallery_tags_single__render_callback( $block_attributes, $con
 			'jquery-ui-dialog',
 			'tags-suggest',
 		),
-		false,
+		'27mar2024',
 		true
 	);
 	wp_enqueue_style( 'wp-jquery-ui-dialog' );

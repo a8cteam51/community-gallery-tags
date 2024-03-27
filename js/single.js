@@ -54,7 +54,7 @@
 				dataType: 'json'
 			}).done( ( response ) => {
 				$.each( response, function( meta_id, tag ) {
-					const $attachment = $( '.post-' + attachmentId + '.type-attachment, attachmentid-' + attachmentId );
+					const $attachment = $( '.post-' + attachmentId + '.type-attachment, body.attachmentid-' + attachmentId );
 					const $tagList = $attachment.find( '.taxonomy-people.wp-block-post-terms' );
 
 					if ( $tagList.length ) {
