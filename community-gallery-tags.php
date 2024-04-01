@@ -583,3 +583,8 @@ add_action(
 		wp_safe_redirect( admin_url( 'upload.php?page=cgt-management' ) );
 	}
 );
+
+/**
+ * Enables attachment pages for WP 6.4+.
+ */
+add_action( 'pre_option_wp_attachment_pages_enabled', '__return_true' );
