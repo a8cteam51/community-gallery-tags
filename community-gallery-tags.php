@@ -4,7 +4,7 @@
  * Description:       Example block scaffolded with Create Block tool.
  * Requires at least: 6.1
  * Requires PHP:      7.0
- * Version:           1.0.0
+ * Version:           1.1.0
  * Author:            The WordPress Contributors
  * License:           GPL-2.0-or-later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
@@ -146,17 +146,25 @@ function community_gallery_tags_gallery__render_callback( $block_attributes ) {
 		}
 	}
 
+	$has_event_photos    = isset( $block_attributes['officialPhotosID'] ) && intval( $block_attributes['officialPhotosID'] ) > 0;
+	$event_photo_user_id = $has_event_photos ? intval( $block_attributes['officialPhotosID'] ) : 0;
+
 	$return = '<div ' . get_block_wrapper_attributes( array( 'class' => 'gallery' ) ) . ">\r\n";
 
-	$return .= '<p id="cgt-filters" class="gallery-caption">';
-	$return .= '<a href="javascript:;" class="all-images selected" data-uploader-id="">' . esc_html__( 'All Images', 'community-gallery-tags' ) . '</a> ';
-	$return .= '<a href="javascript:;" class="my-images" data-uploader-id="' . esc_attr( get_current_user_id() ) . '">' . esc_html__( 'My Uploads', 'community-gallery-tags' ) . '</a>';
-	$return .= '</p>';
+	if ( $has_event_photos ) {
+		$return .= '<p id="cgt-filters" class="gallery-caption">';
+		$return .= '<a href="javascript:;" class="all-images selected" data-uploader-id="">' . esc_html__( 'All Photos', 'community-gallery-tags' ) . '</a> ';
+		$return .= '<a href="javascript:;" class="my-images" data-uploader-id="official">' . esc_html__( 'Official Photos', 'community-gallery-tags' ) . '</a>';
+		$return .= '<a href="javascript:;" class="my-images" data-uploader-id="community">' . esc_html__( 'Community Photos', 'community-gallery-tags' ) . '</a>';
+		$return .= '</p>';
+	}
 
-	$return .= "<ul class='community-gallery-tags-gallery'>\r\n";
+	$return .= "<ul class='community-gallery-tags-gallery' data-event-author='$event_photo_user_id'>\r\n";
 
 	foreach ( $attachments as $item ) {
-		$return .= "\t<li class='media gallery-item attachment-{$item->ID} uploader-id-{$item->post_author}'>\r\n" .
+		$photo_type = $has_event_photos && intval( $item->post_author ) === $event_photo_user_id ? 'official' : 'community';
+
+		$return .= "\t<li class='media gallery-item attachment-{$item->ID} uploader-id-{$photo_type}'>\r\n" .
 			"\t<a href='" . esc_url( get_attachment_link( $item->ID ) ) . "'>\r\n" .
 			"\t\t" . wp_get_attachment_image( $item->ID, 'medium' ) . "\r\n" .
 			"\t</a>\r\n" .

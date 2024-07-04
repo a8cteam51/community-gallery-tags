@@ -11,7 +11,16 @@ import { __ } from '@wordpress/i18n';
  *
  * @see https://developer.wordpress.org/block-editor/reference-guides/packages/packages-block-editor/#useblockprops
  */
-import { useBlockProps } from '@wordpress/block-editor';
+import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
+
+import {
+	ComboboxControl,
+	PanelBody,
+} from '@wordpress/components';
+
+import { withSelect } from '@wordpress/data';
+
+import { useState, useEffect } from '@wordpress/element';
 
 /**
  * Lets webpack process CSS, SASS or SCSS files referenced in JavaScript files.
@@ -29,13 +38,64 @@ import './editor.scss';
  *
  * @return {Element} Element to render.
  */
-export default function Edit() {
+const GalleryEdit = withSelect( ( select ) => {
+		const { isResolving } = select( 'core/data' );
+		const query = { roles: 'administrator' };
+
+		return {
+			users: select( 'core' ).getEntityRecords( 'root', 'user', query ),
+			isRequesting: isResolving( 'core', 'getEntityRecords', [ 'root', 'user', query ] ),
+		};
+	} )( ( props ) => {
+	
+	const { attributes, setAttributes, users, isRequesting } = props;
+	const { officialPhotosID } = attributes;
+
+	const [ usersList, setUsersList ] = useState( [] );
+	const [ filteredOptions, setFilteredOptions ] = useState( [] );
+
+	useEffect( () => {
+		if ( users !== null ) {
+			const userMap = users.map( ( user ) => {
+				return {
+					label: user.name,
+					value: user.id,
+				};
+			});
+
+			setFilteredOptions( userMap );
+			setUsersList( userMap );
+		}
+	}, [ users, isRequesting ] );
+
 	return (
+		<>
+		<InspectorControls>
+			<PanelBody title={ __( 'Community Gallery Tags Settings', 'community-gallery-tags' ) }>
+			<ComboboxControl
+				label={ __( 'Select Official Authors', 'community-gallery-tags' ) }
+				value={ officialPhotosID }
+				onChange={ (value) => setAttributes({ officialPhotosID: Number( value ) }) }
+				options={ usersList }
+				onFilterValueChange={ ( inputValue ) =>
+					setFilteredOptions(
+						usersList.filter( ( option ) =>
+							option.label === inputValue
+						)
+					)
+				}
+				help={ __( 'Select the authors whose images will appear in the official tab or leave blank', 'community-gallery-tags' ) }
+			/>
+			</PanelBody>
+		</InspectorControls>
 		<p { ...useBlockProps() }>
 			{ __(
 				'Community Gallery Tags – hello from the editor!',
 				'community-gallery-tags'
 			) }
 		</p>
+		</>
 	);
-}
+});
+
+export default GalleryEdit;
