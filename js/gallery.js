@@ -3,6 +3,12 @@
 	const $gallery = $('ul.community-gallery-tags-gallery');
 	const $dialogEl = $('#cgt-dialog-form');
 	const $galleryFilters = $('#cgt-filters');
+	const masonryOptions = {
+		itemSelector: 'li.media:not(.hidden)',
+		gutter: 24,
+		percentPosition: true,
+	};
+	const $officialUserID = $gallery.data('event-author') ? $gallery.data('event-author') : 0;
 
 	// Only bother with this stuff if we have the dialog form.  The dialog form will only render if the user can tag.
 	if ( $dialogEl.length ) {
@@ -88,11 +94,7 @@
 		});
 	}
 
-	$gallery.masonry({
-		itemSelector: 'li.media',
-		gutter: 24,
-		percentPosition: true
-	});
+	$gallery.masonry(masonryOptions);
 
 	/**
 	 * Listen for notifications of image upload.  If one happened, toss it into the gallery.
@@ -100,9 +102,10 @@
 	document.body.addEventListener( 'imagesUploaded', function(e) {
 		$.each( e.detail.images, function( index, image ) {
 			if ( image.id ) {
+				const $photo_type = $officialUserID === image.author ? 'official' : 'community';
 				const $newItem = $( tmplCgtItem( {
 					id:        image.id,
-					uploader:  image.author,
+					uploader:  $photo_type,
 					link:      image.link,
 					img_tag:   image.description.rendered
 				} ) );
@@ -119,13 +122,14 @@
 		$target.addClass('selected').siblings('.selected').removeClass('selected');
 		const uploaderId = $target.data('uploader-id');
 
+		$gallery.children( 'li.hidden' ).removeClass('hidden');
+
 		if ( uploaderId ) {
 			$gallery.children( 'li.media').not( '.uploader-id-' + uploaderId ).addClass('hidden');
-		} else {
-			$gallery.children( 'li.media.hidden' ).removeClass('hidden');
 		}
 
-		$gallery.masonry();
+		$gallery.masonry('destroy');
+		$gallery.masonry(masonryOptions);
 	});
 
 }( jQuery, wp ));

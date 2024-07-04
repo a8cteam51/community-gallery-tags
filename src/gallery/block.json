@@ -12,6 +12,11 @@
 		"align": [ "center", "wide", "full" ],
 		"html": false
 	},
+	"attributes": {
+		"officialPhotosID": {
+			"type": "number"
+		}
+	},
 	"textdomain": "community-gallery-tags",
 	"editorScript": "file:./index.js",
 	"editorStyle": "file:./index.css",
