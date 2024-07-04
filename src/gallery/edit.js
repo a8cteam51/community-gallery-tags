@@ -40,7 +40,7 @@ import './editor.scss';
  */
 const GalleryEdit = withSelect( ( select ) => {
 		const { isResolving } = select( 'core/data' );
-		const query = { roles: 'administrator' };
+		const query = { capabilities: 'edit_posts, to51_upload_files', per_page: -1};
 
 		return {
 			users: select( 'core' ).getEntityRecords( 'root', 'user', query ),
