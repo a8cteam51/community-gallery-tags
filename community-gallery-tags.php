@@ -197,7 +197,9 @@ function community_gallery_tags_gallery__render_callback( $block_attributes ) {
 	// phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores, WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 	$return = apply_filters( 'render_block_core/gallery', $return, $block_attributes );
 
-	if ( current_user_can( get_taxonomy( 'people' )->cap->assign_terms ) ) {
+	$user = wp_get_current_user();
+
+	if ( isset( $user->roles ) && in_array( 'administrator', $user->roles, true ) ) {
 		$unreviewed_total = (int) $wpdb->get_var( "SELECT COUNT(*) FROM `{$wpdb->postmeta}` WHERE `meta_key` = '_cgt_suggested_tag'" );
 
 		if ( $unreviewed_total > 0 ) {
