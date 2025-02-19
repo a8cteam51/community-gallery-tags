@@ -45,11 +45,14 @@ const GalleryEdit = withSelect( ( select ) => {
 		return {
 			users: select( 'core' ).getEntityRecords( 'root', 'user', query ),
 			isRequesting: isResolving( 'core', 'getEntityRecords', [ 'root', 'user', query ] ),
+			media: select( 'core' ).getEntityRecords( 'root', 'media', { per_page: -1, parent: 28 } ),
 		};
 	} )( ( props ) => {
 	
-	const { attributes, setAttributes, users, isRequesting } = props;
+	const { attributes, setAttributes, users, isRequesting, media } = props;
 	const { officialPhotosID } = attributes;
+
+	console.log( media );
 
 	const [ usersList, setUsersList ] = useState( [] );
 	const [ filteredOptions, setFilteredOptions ] = useState( [] );
@@ -88,12 +91,22 @@ const GalleryEdit = withSelect( ( select ) => {
 			/>
 			</PanelBody>
 		</InspectorControls>
-		<p { ...useBlockProps() }>
-			{ __(
-				'Community Gallery Tags – hello from the editor!',
-				'community-gallery-tags'
-			) }
-		</p>
+		<div { ...useBlockProps() }>
+			<p id="cgt-filters" class="gallery-caption">
+				<a class="all-images selected" data-uploader-id="">{ __( 'All Photos', 'community-gallery-tags' ) }</a>
+				<a class="my-images" data-uploader-id="official">{ __( 'Official Photos', 'community-gallery-tags' ) }</a>
+				<a class="my-images" data-uploader-id="community">{ __( 'Community Photos', 'community-gallery-tags' ) }</a>
+			</p>
+			<ul>
+				{ media ? media.map( ( image ) => {
+					return (
+						<li>
+							<img src={ image.source_url } />
+						</li>
+					);
+				} ) : null }
+			</ul>
+		</div>
 		</>
 	);
 });
