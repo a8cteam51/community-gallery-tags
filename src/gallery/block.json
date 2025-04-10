@@ -10,16 +10,36 @@
 	"example": {},
 	"supports": {
 		"align": [ "center", "wide", "full" ],
-		"html": false
+		"html": false,
+		"multiple": false,
+		"spacing": {
+			"margin": true,
+			"padding": true
+		},
+		"typography": {
+			"fontSize": true,
+			"textAlign": true
+		}
 	},
 	"attributes": {
 		"officialPhotosID": {
 			"type": "number"
+		},
+		"allPhotosText": {
+			"type": "string",
+			"default": "All Photos"
+		},
+		"officalPhotosText": {
+			"type": "string",
+			"default": "Official Photos"
+		},
+		"communityPhotosText": {
+			"type": "string",
+			"default": "Community Photos"
 		}
 	},
 	"textdomain": "community-gallery-tags",
 	"editorScript": "file:./index.js",
-	"editorStyle": "file:./index.css",
 	"style": "file:./style-index.css",
 	"viewScript": "file:./view.js"
 }

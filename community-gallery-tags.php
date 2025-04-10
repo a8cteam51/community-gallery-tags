@@ -157,13 +157,17 @@ function community_gallery_tags_gallery__render_callback( $block_attributes ) {
 	$has_event_photos    = isset( $block_attributes['officialPhotosID'] ) && intval( $block_attributes['officialPhotosID'] ) > 0;
 	$event_photo_user_id = $has_event_photos ? intval( $block_attributes['officialPhotosID'] ) : 0;
 
+	$all_photos_text       = isset( $block_attributes['allPhotosText'] ) ? $block_attributes['allPhotosText'] : __( 'All Photos', 'community-gallery-tags' );
+	$official_photos_text  = isset( $block_attributes['officalPhotosText'] ) ? $block_attributes['officalPhotosText'] : __( 'Official Photos', 'community-gallery-tags' );
+	$community_photos_text = isset( $block_attributes['communityPhotosText'] ) ? $block_attributes['communityPhotosText'] : __( 'Community Photos', 'community-gallery-tags' );
+
 	$return = '<div ' . get_block_wrapper_attributes( array( 'class' => 'gallery' ) ) . ">\r\n";
 
 	if ( $has_event_photos ) {
 		$return .= '<p id="cgt-filters" class="gallery-caption">';
-		$return .= '<a href="javascript:;" class="all-images selected" data-uploader-id="">' . esc_html__( 'All Photos', 'community-gallery-tags' ) . '</a> ';
-		$return .= '<a href="javascript:;" class="my-images" data-uploader-id="official">' . esc_html__( 'Official Photos', 'community-gallery-tags' ) . '</a>';
-		$return .= '<a href="javascript:;" class="my-images" data-uploader-id="community">' . esc_html__( 'Community Photos', 'community-gallery-tags' ) . '</a>';
+		$return .= '<a href="javascript:;" class="all-images selected" data-uploader-id="">' . esc_html( $all_photos_text ) . '</a> ';
+		$return .= '<a href="javascript:;" class="my-images" data-uploader-id="official">' . esc_html( $official_photos_text ) . '</a>';
+		$return .= '<a href="javascript:;" class="my-images" data-uploader-id="community">' . esc_html( $community_photos_text ) . '</a>';
 		$return .= '</p>';
 	}
 

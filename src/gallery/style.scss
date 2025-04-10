@@ -6,6 +6,8 @@
  */
 
 .wp-block-community-gallery-tags-gallery {
+	box-sizing: border-box;
+
 	&.aligncenter {
 		.community-gallery-tags-gallery {
 			margin: 0 auto;
@@ -13,6 +15,9 @@
 	}
 
 	#cgt-filters {
+		display: inline-flex;
+		gap: 0.5em;
+
 		.selected {
 			font-weight: 700;
 		}

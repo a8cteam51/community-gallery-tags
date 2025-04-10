@@ -7,6 +7,7 @@
 		itemSelector: 'li.media:not(.hidden)',
 		gutter: 24,
 		percentPosition: true,
+		columnWidth: 300
 	};
 	const $officialUserID = $gallery.data('event-author') ? $gallery.data('event-author') : 0;
 
