@@ -1,0 +1,77 @@
+.community-gallery-tags-uploads {
+	margin: 0 auto;
+
+	button.community-gallery-tags-uploads__button {
+		background-color: var(--wp--preset--color--base);
+		border: 1px dotted var(--wp--preset--color--contrast);
+		color: var(--wp--preset--color--contrast);
+		cursor: pointer;
+		font-family: inherit;
+		font-size: inherit;
+		justify-content: center;
+		text-align: center;
+		text-transform: inherit;
+		overflow: hidden;
+		padding: var(--wp--preset--spacing--80, 5rem);
+		position: relative;
+		width: 100%;
+
+		&:disabled {
+			cursor: not-allowed;
+			opacity: 0.5;
+
+			&:hover {
+				text-decoration: none;
+			}
+		}
+	}
+
+	.components-drop-zone,
+	.components-drop-zone__content {
+		bottom: 0;
+		left: 0;
+		position: absolute;
+		top: 0;
+		right: 0;
+	}
+
+	.components-drop-zone__content {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.components-drop-zone__content-inner {
+		align-items: center;
+		display: flex;
+		gap: 5px;
+	}
+
+	.community-gallery-tags-uploads__uploaded-files {
+		list-style: none;
+		margin: var(--wp--preset--spacing--40) 0 0 0;
+		padding: 0;
+
+		li {
+			align-items: center;
+			display: flex;
+			margin-bottom: var(--wp--preset--spacing--20);
+
+			img {
+				height: auto;
+				margin-right: var(--wp--preset--spacing--20);
+			}
+		}
+	}
+
+	.community-gallery-tags-uploads__show-hide {
+		cursor: pointer;
+		display: block;
+		margin-left: auto;
+		margin-right: auto;
+
+		&:hover {
+			text-decoration: none;
+		}
+	}
+}

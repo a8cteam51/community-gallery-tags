@@ -1,0 +1,38 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 2,
+  "name": "community-gallery-tags/upload",
+  "version": "0.1.0",
+  "title": "Upload images",
+  "category": "widgets",
+  "icon": "upload",
+  "description": "Allow uploads to the media library for logged in users",
+  "supports": {
+    "html": false,
+    "align": ["center", "wide", "full"],
+    "typography": {
+      "fontSize": true,
+      "__experimentalFontFamily": true,
+      "__experimentalLetterSpacing": true,
+      "__experimentalTextTransform": true
+    },
+    "spacing": {
+      "margin": ["top", "bottom"]
+    }
+  },
+  "attributes": {
+    "uploadTo": {
+      "type": "number"
+    },
+    "buttonText": {
+      "type": "string",
+      "default": "Upload Files"
+    }
+  },
+  "textdomain": "community-gallery-tags",
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./index.css",
+  "style": "file:./style-index.css",
+  "render": "file:./render.php",
+  "viewScript": "file:./view.js"
+}
