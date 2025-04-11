@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       Community Gallery Tags
  * Description:       Example block scaffolded with Create Block tool.
- * Requires at least: 6.1
+ * Requires at least: 6.5
  * Requires PHP:      7.0
  * Version:           1.1.0
  * Author:            The WordPress Contributors
@@ -36,6 +36,7 @@ function cgt_add_categories_to_attachments() {
 		)
 	);
 }
+
 add_action( 'init', 'cgt_add_categories_to_attachments' );
 
 /**
@@ -88,7 +89,14 @@ function community_gallery_tags_gallery_block_init() {
 			'render_callback' => 'community_gallery_tags_single__render_callback',
 		)
 	);
+	register_block_type(
+		__DIR__ . '/build/people-tag-list',
+	);
+	register_block_type(
+		__DIR__ . '/build/upload-media',
+	);
 }
+
 add_action( 'init', 'community_gallery_tags_gallery_block_init' );
 
 /**
@@ -598,3 +606,5 @@ add_action(
  * Enables attachment pages for WP 6.4+.
  */
 add_action( 'pre_option_wp_attachment_pages_enabled', '__return_true' );
+
+require_once __DIR__ . '/inc/upload-media.php';
