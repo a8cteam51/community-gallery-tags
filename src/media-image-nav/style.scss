@@ -1,0 +1,28 @@
+.wp-block-community-gallery-tags-media-attachment-navigation {
+	align-items: center;
+	display: flex;
+	gap: 1em;
+	justify-content: space-between;
+
+	@media screen and (max-width: 600px) {
+		flex-direction: column;
+		justify-content: center;
+	}
+
+	.media-attachment-navigation_prev,
+	.media-attachment-navigation_next {
+		display: flex;
+		flex: 1;
+	}
+
+	.media-attachment-navigation_next {
+		justify-content: flex-end;
+	}
+	.media-attachment-navigation_prev {
+		justify-content: flex-start;
+	}
+
+	a {
+		display: block;
+	}
+}
