@@ -21,8 +21,7 @@
       "padding": true
     },
     "typography": {
-      "fontSize": true,
-      "textAlign": true
+      "fontSize": true
     }
   },
   "attributes": {
