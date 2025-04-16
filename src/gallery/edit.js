@@ -40,11 +40,12 @@ import clsx from 'clsx';
 const GalleryEdit = withSelect( ( select ) => {
 		const { isResolving } = select( 'core/data' );
 		const query = { capabilities: 'edit_posts, to51_upload_files', per_page: -1};
+		const postID = select("core/editor").getCurrentPostId();
 
 		return {
 			users: select( 'core' ).getEntityRecords( 'root', 'user', query ),
 			isRequesting: isResolving( 'core', 'getEntityRecords', [ 'root', 'user', query ] ),
-			media: select( 'core' ).getEntityRecords( 'root', 'media', { per_page: -1, parent: 28 } ),
+			media: select( 'core' ).getEntityRecords( 'root', 'media', { per_page: -1, parent: postID } ),
 			peopleTaxonomy: select( 'core' ).getEntityRecords( 'taxonomy', 'people', { per_page: -1 } ),
 		};
 	} )( ( props ) => {
@@ -69,7 +70,7 @@ const GalleryEdit = withSelect( ( select ) => {
 		}
 	}, [ users, isRequesting ] );
 
-	const msnry = new Masonry( '.community-gallery-tags-gallery',
+	new Masonry( '.community-gallery-tags-gallery',
 		{
 			itemSelector: 'li.media:not(.hidden)',
 			columnWidth: 300,
@@ -77,8 +78,6 @@ const GalleryEdit = withSelect( ( select ) => {
 			percentPosition: true,
 		}
 	);
-
-	const alignmentClass = clsx( attributes?.style?.typography?.textAlign && `has-text-align-${ attributes?.style?.typography?.textAlign }` );
 
 	return (
 		<>
@@ -106,63 +105,84 @@ const GalleryEdit = withSelect( ( select ) => {
 			}
 		`}</style>
 		<div { ...useBlockProps() }>
-			<p
-				id="cgt-filters"
-				className={ `gallery-caption ${ alignmentClass }` }
-			>
-				<RichText
-					tagName="a"
-					value={ allPhotosText }
-					allowedFormats={ [] }
-					onChange={ ( content ) => setAttributes( { allPhotosText: content } ) }
-					className="all-images selected"
-					data-uploader-id=""
-				/>
-				<RichText
-					tagName="a"
-					value={ officalPhotosText }
-					allowedFormats={ [] }
-					onChange={ ( content ) => setAttributes( { officalPhotosText: content } ) }
-					className="my-images"
-					data-uploader-id="official"
-				/>
-				<RichText
-					tagName="a"
-					value={ communityPhotosText }
-					allowedFormats={ [] }
-					onChange={ ( content ) => setAttributes( { communityPhotosText: content } ) }
-					className="my-images"
-					data-uploader-id="community"
-				/>
-			</p>
-			<ul className="community-gallery-tags-gallery">
-				{ media ? media.map( ( image ) => {
-					return (
-						<li className='media gallery-item' key={ image.id }>
-							<img src={ image.source_url } />
-							{
-								image?.people && (
-									<ul className="term-list">
-										{
-											image?.people.map( ( person ) => {
-												const user = peopleTaxonomy?.find( ( item ) => {
-													return item.id === person;
-												});
 			
-												return (
-													<li className="gallery-caption" key={ user?.id } >
-														{ user?.name }
-													</li>
-												);
-											})
-										}
-									</ul>
-								)
-							}
-						</li>
-					);
-				} ) : null }
-			</ul>
+			{
+				officialPhotosID ? (
+					<p
+						id="cgt-filters"
+						className="gallery-caption"
+					>
+						<RichText
+							tagName="a"
+							value={ allPhotosText }
+							allowedFormats={ [] }
+							onChange={ ( content ) => setAttributes( { allPhotosText: content } ) }
+							className="all-images selected"
+							data-uploader-id=""
+						/>
+						<RichText
+							tagName="a"
+							value={ officalPhotosText }
+							allowedFormats={ [] }
+							onChange={ ( content ) => setAttributes( { officalPhotosText: content } ) }
+							className="my-images"
+							data-uploader-id="official"
+						/>
+						<RichText
+							tagName="a"
+							value={ communityPhotosText }
+							allowedFormats={ [] }
+							onChange={ ( content ) => setAttributes( { communityPhotosText: content } ) }
+							className="my-images"
+							data-uploader-id="community"
+						/>
+					</p>
+				) : (
+					<p
+						id="cgt-filters"
+						className="gallery-caption"
+					>
+						{ __( 'Choose an official photographer in the sidebar to view the tabs.', 'community-gallery-tags' ) }
+					</p>
+				)
+			}
+				
+			{
+				media && media.length > 0 ? (
+					<ul className="community-gallery-tags-gallery">
+						{ media && media.map( ( image ) => {
+							return (
+								<li className='media gallery-item' key={ image.id }>
+									<img src={ image.source_url } />
+									{
+										image?.people && (
+											<ul className="term-list">
+												{
+													image?.people.map( ( person ) => {
+														const user = peopleTaxonomy?.find( ( item ) => {
+															return item.id === person;
+														});
+					
+														return (
+															<li className="gallery-caption" key={ user?.id } >
+																{ user?.name }
+															</li>
+														);
+													})
+												}
+											</ul>
+										)
+									}
+								</li>
+							);
+						} )}
+					</ul>
+				):(
+					<p className="gallery-caption has-text-align-center">
+						{ __( 'Images attached to this post will appear here.', 'community-gallery-tags' ) }
+					</p>
+				)
+			}
 		</div>
 		</>
 	);
