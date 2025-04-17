@@ -1,0 +1,40 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 2,
+  "name": "community-gallery-tags/media-attachment-navigation",
+  "version": "0.1.0",
+  "title": "Media Navigation",
+  "category": "widgets",
+  "icon": "image-flip-horizontal",
+  "usesContext": [
+    "postId",
+    "postType",
+    "queryId"
+  ],
+  "description": "Media Navigation block for navigating between media attachments.",
+  "supports": {
+    "html": false,
+    "align": [
+      "center",
+      "wide",
+      "full"
+    ],
+    "color": {
+      "background": false,
+      "text": true
+    },
+    "spacing": {
+      "margin": true,
+      "padding": true
+    },
+    "typography": {
+      "fontSize": true,
+      "lineHeight": true
+    }
+  },
+  "textdomain": "community-gallery-tags",
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./index.css",
+  "style": "file:./style-index.css",
+  "render": "file:./render.php"
+}

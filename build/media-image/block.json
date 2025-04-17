@@ -1,0 +1,29 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 2,
+  "name": "community-gallery-tags/media-attachment",
+  "version": "0.1.0",
+  "title": "Media attachment",
+  "usesContext": [
+    "postId",
+    "postType",
+    "queryId"
+  ],
+  "category": "widgets",
+  "icon": "format-image",
+  "description": "Block to display media attachment on the attachment attachment page",
+  "supports": {
+    "html": false,
+    "spacing": {
+      "margin": [
+        "top",
+        "bottom"
+      ]
+    }
+  },
+  "textdomain": "community-gallery-tags",
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./index.css",
+  "style": "file:./style-index.css",
+  "render": "file:./render.php"
+}

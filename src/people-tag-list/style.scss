@@ -1,0 +1,70 @@
+.wp-block-community-gallery-tags-people-tag-list {
+	list-style: none;
+	position: relative;
+	text-align: center;
+
+	.people-tax-list__title {
+		&::before {
+			background-image: url('data:image/svg+xml,<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M16 8C16 5.79 14.21 4 12 4C9.79 4 8 5.79 8 8C8 10.21 9.79 12 12 12C14.21 12 16 10.21 16 8ZM12 13C16.1 13 20 15.6 20 18C20 20 12 20 12 20C12 20 4 20 4 18C4 15.6 7.9 13 12 13Z" fill="%235D5C65"/><mask id="mask0_4535_3671" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="4" y="4" width="16" height="16"><path fill-rule="evenodd" clip-rule="evenodd" d="M16 8C16 5.79 14.21 4 12 4C9.79 4 8 5.79 8 8C8 10.21 9.79 12 12 12C14.21 12 16 10.21 16 8ZM12 13C16.1 13 20 15.6 20 18C20 20 12 20 12 20C12 20 4 20 4 18C4 15.6 7.9 13 12 13Z" fill="white"/></mask><g mask="url(%23mask0_4535_3671)"><rect width="24" height="24" fill="%235D5C65"/></g></svg>');
+			content: "";
+			display: inline-block;
+			height: 24px;
+			width: 24px;
+		}
+
+		align-items: center;
+		display: inline-flex;
+		text-transform: uppercase;
+	}
+
+	.people-tax-list__links {
+		padding-left: 20px;
+		padding-right: 20px;
+	}
+
+	&.clip-taxonomy .people-tax-list__links {
+		height: 3.2em;
+		overflow: clip;
+		position: relative;
+	}
+
+	.people-tax-list__show-all {
+		background: var(--wp--preset--color--base);
+		background: linear-gradient(
+			90deg,
+			rgb(from var(--wp--preset--color--base) r g b / 0%) 0%,
+			var(--wp--preset--color--base) 22%
+		);
+		bottom: 0px;
+		border: none;
+		color: var(--wp--preset--color--contrast);
+		padding: 8px 2ch;
+		position: absolute;
+		right: -20px;
+
+		&.hidden {
+			display: none;
+		}
+
+		&:hover {
+			cursor: pointer;
+		}
+
+		&:hover,
+		&:focus {
+			text-decoration: none;
+		}
+	}
+
+	a {
+		text-decoration: none;
+
+		&:hover {
+			text-decoration: underline;
+		}
+
+		&[aria-disabled="true"] {
+			pointer-events: none;
+		}
+	}
+}

@@ -5,6 +5,7 @@
 	"author": "The WordPress Contributors",
 	"license": "GPL-2.0-or-later",
 	"main": "build/index.js",
+	"files": [ "inc", "build", "community-gallery-tags.php" ],
 	"scripts": {
 		"build": "wp-scripts build",
 		"format": "wp-scripts format",
@@ -16,5 +17,9 @@
 	},
 	"devDependencies": {
 		"@wordpress/scripts": "^27.4.0"
+	},
+	"dependencies": {
+		"clsx": "^2.1.1",
+		"masonry-layout": "^4.2.2"
 	}
 }

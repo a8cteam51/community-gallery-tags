@@ -1,10 +1,10 @@
 <?php
 /**
  * Plugin Name:       Community Gallery Tags
- * Description:       Example block scaffolded with Create Block tool.
- * Requires at least: 6.1
+ * Description:       Allow your users to upload photos and tag them.
+ * Requires at least: 6.7
  * Requires PHP:      7.0
- * Version:           1.1.0
+ * Version:           1.2.0
  * Author:            The WordPress Contributors
  * License:           GPL-2.0-or-later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
@@ -14,6 +14,38 @@
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
+
+/**
+ * Register the people taxonomy for use on attachments.
+ * Add a page for the community gallery.
+ * Flush re-write rules.
+ *
+ * @return void
+ */
+function cgt_activate_plugin() {
+	if ( ! taxonomy_exists( 'people' ) ) {
+		cgt_add_categories_to_attachments();
+	}
+
+	$gallery_page_exists = get_page_by_path( 'community-gallery' );
+
+	if ( is_null( $gallery_page_exists ) ) {
+		wp_insert_post(
+			array(
+				'post_title'   => esc_html__( 'Community Gallery', 'community-gallery-tags' ),
+				'post_content' => '<!-- wp:pattern {"slug":"cgt/gallery-page"} /-->',
+				'post_status'  => 'draft',
+				'post_type'    => 'page',
+				'post_name'    => 'community-gallery',
+			)
+		);
+	}
+
+	// Flush rewrite rules to ensure the new stuff is registered.
+	flush_rewrite_rules();
+}
+
+register_activation_hook( __FILE__, 'cgt_activate_plugin' );
 
 /**
  * Register `people` taxonomy for use on attachments.
@@ -36,6 +68,7 @@ function cgt_add_categories_to_attachments() {
 		)
 	);
 }
+
 add_action( 'init', 'cgt_add_categories_to_attachments' );
 
 /**
@@ -82,13 +115,31 @@ function community_gallery_tags_gallery_block_init() {
 			'render_callback' => 'community_gallery_tags_gallery__render_callback',
 		)
 	);
+
 	register_block_type(
 		__DIR__ . '/build/single',
 		array(
 			'render_callback' => 'community_gallery_tags_single__render_callback',
 		)
 	);
+
+	register_block_type(
+		__DIR__ . '/build/people-tag-list',
+	);
+
+	register_block_type(
+		__DIR__ . '/build/upload-media',
+	);
+
+	register_block_type(
+		__DIR__ . '/build/media-image',
+	);
+
+	register_block_type(
+		__DIR__ . '/build/media-image-nav',
+	);
 }
+
 add_action( 'init', 'community_gallery_tags_gallery_block_init' );
 
 /**
@@ -149,13 +200,17 @@ function community_gallery_tags_gallery__render_callback( $block_attributes ) {
 	$has_event_photos    = isset( $block_attributes['officialPhotosID'] ) && intval( $block_attributes['officialPhotosID'] ) > 0;
 	$event_photo_user_id = $has_event_photos ? intval( $block_attributes['officialPhotosID'] ) : 0;
 
+	$all_photos_text       = isset( $block_attributes['allPhotosText'] ) ? $block_attributes['allPhotosText'] : __( 'All Photos', 'community-gallery-tags' );
+	$official_photos_text  = isset( $block_attributes['officalPhotosText'] ) ? $block_attributes['officalPhotosText'] : __( 'Official Photos', 'community-gallery-tags' );
+	$community_photos_text = isset( $block_attributes['communityPhotosText'] ) ? $block_attributes['communityPhotosText'] : __( 'Community Photos', 'community-gallery-tags' );
+
 	$return = '<div ' . get_block_wrapper_attributes( array( 'class' => 'gallery' ) ) . ">\r\n";
 
 	if ( $has_event_photos ) {
 		$return .= '<p id="cgt-filters" class="gallery-caption">';
-		$return .= '<a href="javascript:;" class="all-images selected" data-uploader-id="">' . esc_html__( 'All Photos', 'community-gallery-tags' ) . '</a> ';
-		$return .= '<a href="javascript:;" class="my-images" data-uploader-id="official">' . esc_html__( 'Official Photos', 'community-gallery-tags' ) . '</a>';
-		$return .= '<a href="javascript:;" class="my-images" data-uploader-id="community">' . esc_html__( 'Community Photos', 'community-gallery-tags' ) . '</a>';
+		$return .= '<a href="javascript:;" class="all-images selected" data-uploader-id="">' . esc_html( $all_photos_text ) . '</a> ';
+		$return .= '<a href="javascript:;" class="my-images" data-uploader-id="official">' . esc_html( $official_photos_text ) . '</a>';
+		$return .= '<a href="javascript:;" class="my-images" data-uploader-id="community">' . esc_html( $community_photos_text ) . '</a>';
 		$return .= '</p>';
 	}
 
@@ -598,3 +653,7 @@ add_action(
  * Enables attachment pages for WP 6.4+.
  */
 add_action( 'pre_option_wp_attachment_pages_enabled', '__return_true' );
+
+require_once __DIR__ . '/inc/upload-media.php';
+require_once __DIR__ . '/inc/fse-templates.php';
+require_once __DIR__ . '/inc/fse-patterns.php';
