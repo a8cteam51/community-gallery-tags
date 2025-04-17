@@ -1,10 +1,10 @@
 <?php
 /**
  * Plugin Name:       Community Gallery Tags
- * Description:       Example block scaffolded with Create Block tool.
+ * Description:       Allow your users to upload photos and tag them.
  * Requires at least: 6.7
  * Requires PHP:      7.0
- * Version:           1.1.0
+ * Version:           1.2.0
  * Author:            The WordPress Contributors
  * License:           GPL-2.0-or-later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
