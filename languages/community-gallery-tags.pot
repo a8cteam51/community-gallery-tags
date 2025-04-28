@@ -1,0 +1,321 @@
+# Copyright (C) 2025 The WordPress Contributors
+# This file is distributed under the GPL-2.0-or-later.
+msgid ""
+msgstr ""
+"Project-Id-Version: Community Gallery Tags 1.2.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/community-gallery-tags\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2025-04-28T09:38:27+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.11.0\n"
+"X-Domain: community-gallery-tags\n"
+
+#. Plugin Name of the plugin
+#: community-gallery-tags.php
+#: inc/fse-patterns.php:17
+msgid "Community Gallery Tags"
+msgstr ""
+
+#. Description of the plugin
+#: community-gallery-tags.php
+msgid "Allow your users to upload photos and tag them."
+msgstr ""
+
+#. Author of the plugin
+#: community-gallery-tags.php
+msgid "The WordPress Contributors"
+msgstr ""
+
+#: build/people-tag-list/render.php:14
+#: src/people-tag-list/render.php:14
+msgid "No images found, add some photos to the gallery and then tag your friends"
+msgstr ""
+
+#: build/people-tag-list/render.php:17
+#: src/people-tag-list/render.php:17
+msgid "Tagged"
+msgstr ""
+
+#: build/people-tag-list/render.php:29
+#: src/people-tag-list/render.php:29
+msgid "No tags found"
+msgstr ""
+
+#: build/people-tag-list/render.php:38
+#: src/people-tag-list/render.php:38
+msgid "See All"
+msgstr ""
+
+#: build/upload-media/render.php:7
+#: src/upload-media/render.php:7
+msgid "Upload Files"
+msgstr ""
+
+#: community-gallery-tags.php:35
+msgid "Community Gallery"
+msgstr ""
+
+#: community-gallery-tags.php:60
+msgid "People"
+msgstr ""
+
+#: community-gallery-tags.php:203
+msgid "All Photos"
+msgstr ""
+
+#: community-gallery-tags.php:204
+msgid "Official Photos"
+msgstr ""
+
+#: community-gallery-tags.php:205
+msgid "Community Photos"
+msgstr ""
+
+#: community-gallery-tags.php:240
+#: community-gallery-tags.php:308
+#: community-gallery-tags.php:388
+msgid "＋&nbsp;Tag&nbsp;Name"
+msgstr ""
+
+#. translators: 1: link to admin page, 2: qty unreviewed submissions
+#: community-gallery-tags.php:262
+msgid "There are currently <a href=\"%1$s\" target=\"_blank\">%2$d tag submissions to review.</a>"
+msgstr ""
+
+#: community-gallery-tags.php:398
+msgid "Name to Tag:"
+msgstr ""
+
+#: community-gallery-tags.php:400
+msgid "Multiple tags can be seperated by commas."
+msgstr ""
+
+#: community-gallery-tags.php:487
+msgctxt "tag delimiter"
+msgid ","
+msgstr ""
+
+#: community-gallery-tags.php:492
+#: community-gallery-tags.php:628
+msgid "The specified attachment ID does not seem to be valid."
+msgstr ""
+
+#: community-gallery-tags.php:527
+msgid "Community Gallery Tags Management"
+msgstr ""
+
+#: community-gallery-tags.php:528
+msgid "CGT Admin"
+msgstr ""
+
+#: community-gallery-tags.php:548
+msgid "Custom Gallery Tags Management"
+msgstr ""
+
+#: community-gallery-tags.php:554
+msgid "Attachment"
+msgstr ""
+
+#: community-gallery-tags.php:555
+msgid "Suggestion"
+msgstr ""
+
+#: community-gallery-tags.php:556
+msgid "Tags already on Media"
+msgstr ""
+
+#: community-gallery-tags.php:557
+msgid "Action"
+msgstr ""
+
+#. translators: %s: User login.
+#: community-gallery-tags.php:573
+msgid "By User <strong>%s</strong>"
+msgstr ""
+
+#: community-gallery-tags.php:589
+msgid "Add"
+msgstr ""
+
+#: community-gallery-tags.php:596
+msgid "Delete"
+msgstr ""
+
+#: community-gallery-tags.php:609
+msgid "There are no pending suggestions for tags on your media items."
+msgstr ""
+
+#: inc/fse-patterns.php:18
+msgid "Patterns from the Community Gallery Tags Plugin"
+msgstr ""
+
+#: inc/fse-patterns.php:25
+msgid "Gallery Page Template"
+msgstr ""
+
+#: inc/fse-templates.php:14
+msgid "People Archive"
+msgstr ""
+
+#: inc/fse-templates.php:15
+msgid "A template to display all images taged with a person tag"
+msgstr ""
+
+#: inc/fse-templates.php:22
+msgid "Tagged:"
+msgstr ""
+
+#: inc/fse-templates.php:56
+msgid "Attachment Pages"
+msgstr ""
+
+#: inc/fse-templates.php:57
+msgid "A template to display the single attachments"
+msgstr ""
+
+#: build/gallery/index.js:1
+#: src/gallery/edit.js:85
+msgid "Community Gallery Tags Settings"
+msgstr ""
+
+#: build/gallery/index.js:1
+#: src/gallery/edit.js:87
+msgid "Select Official Authors"
+msgstr ""
+
+#: build/gallery/index.js:1
+#: src/gallery/edit.js:98
+msgid "Select the authors whose images will appear in the official tab or leave blank"
+msgstr ""
+
+#: build/gallery/index.js:1
+#: src/gallery/edit.js:145
+msgid "Choose an official photographer in the sidebar to view the tabs."
+msgstr ""
+
+#: build/gallery/index.js:1
+#: src/gallery/edit.js:182
+msgid "Images attached to this post will appear here."
+msgstr ""
+
+#: build/media-image/index.js:1
+#: src/media-image/edit.js:13
+msgid "Image or Video"
+msgstr ""
+
+#: build/single/index.js:1
+#: src/single/edit.js:28
+msgid "Suggest a Tag?"
+msgstr ""
+
+#: build/upload-media/index.js:1
+#: build/upload-media/view.js:1
+#: src/upload-media/MediaUploads.js:95
+msgid "This file could not be uploaded"
+msgstr ""
+
+#. translators: %s: file name
+#: build/upload-media/index.js:2
+#: build/upload-media/view.js:2
+#: src/upload-media/MediaUploads.js:127
+msgid "%s is loading"
+msgstr ""
+
+#. translators: %s: file name
+#: build/upload-media/index.js:3
+#: build/upload-media/view.js:3
+#: src/upload-media/MediaUploads.js:143
+msgid "%s has been uploaded"
+msgstr ""
+
+#: build/upload-media/index.js:3
+#: build/upload-media/view.js:3
+#: src/upload-media/MediaUploads.js:170
+msgid "+ Add to gallery"
+msgstr ""
+
+#: build/upload-media/index.js:3
+#: src/upload-media/edit.js:26
+msgid "Settings"
+msgstr ""
+
+#: build/upload-media/index.js:3
+#: src/upload-media/edit.js:28
+msgid "Button Text"
+msgstr ""
+
+#: build/gallery/block.json
+#: src/gallery/block.json
+msgctxt "block title"
+msgid "Community Gallery Tags"
+msgstr ""
+
+#: build/gallery/block.json
+#: src/gallery/block.json
+msgctxt "block description"
+msgid "Block to display a gallery of photos, and enable visitors to suggest tags."
+msgstr ""
+
+#: build/media-image-nav/block.json
+#: src/media-image-nav/block.json
+msgctxt "block title"
+msgid "Media Navigation"
+msgstr ""
+
+#: build/media-image-nav/block.json
+#: src/media-image-nav/block.json
+msgctxt "block description"
+msgid "Media Navigation block for navigating between media attachments."
+msgstr ""
+
+#: build/media-image/block.json
+#: src/media-image/block.json
+msgctxt "block title"
+msgid "Media attachment"
+msgstr ""
+
+#: build/media-image/block.json
+#: src/media-image/block.json
+msgctxt "block description"
+msgid "Block to display media attachment on the attachment attachment page"
+msgstr ""
+
+#: build/people-tag-list/block.json
+#: src/people-tag-list/block.json
+msgctxt "block title"
+msgid "People Tag List"
+msgstr ""
+
+#: build/people-tag-list/block.json
+#: src/people-tag-list/block.json
+msgctxt "block description"
+msgid "List of tagged people."
+msgstr ""
+
+#: build/single/block.json
+#: src/single/block.json
+msgctxt "block title"
+msgid "Suggest a Tag"
+msgstr ""
+
+#: build/single/block.json
+#: src/single/block.json
+msgctxt "block description"
+msgid "Suggest a Tag for Media Library Items"
+msgstr ""
+
+#: build/upload-media/block.json
+#: src/upload-media/block.json
+msgctxt "block title"
+msgid "Upload images"
+msgstr ""
+
+#: build/upload-media/block.json
+#: src/upload-media/block.json
+msgctxt "block description"
+msgid "Allow uploads to the media library for logged in users"
+msgstr ""
